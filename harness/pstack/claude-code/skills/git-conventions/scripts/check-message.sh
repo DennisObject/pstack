@@ -6,10 +6,14 @@
 # Usage: check-message.sh commit <file> [--allow-term <word>]...
 #        check-message.sh title <text> [--allow-term <word>]...
 #        check-message.sh body <file> [--allow-term <word>]...
+#        check-message.sh attribution <file> [--allow-term <word>]...
 #   <file> can be - for stdin. Exit 0 when clean, 1 on a violation, 2 on misuse.
+#   attribution checks only for AI attribution. Use it for a PR body that
+#   follows a repository template instead of Why, Testing, and Deployment.
 #   --allow-term lets one AI product name through when it is part of the
-#   project's own domain, such as a client for that product's API. Attribution
-#   trailers and "generated with" lines are never allowed.
+#   project's own domain, such as a client for that product's API. So does
+#   `git config --add pstack.allowTerm <word>` in that repository, which also
+#   reaches the commit-msg hook. Attribution lines are never allowed.
 #   Symlinked as .git/hooks/commit-msg, it checks every commit message.
 set -u
 
@@ -21,7 +25,7 @@ usage() { sed -n '2,/^set -u/p' "$0" | sed '$d; s/^# \{0,1\}//' >&2; exit 2; }
 mode="$1"
 input="$2"
 shift 2
-allowed=""
+allowed="$(git config --get-all pstack.allowTerm 2>/dev/null | tr '[:upper:]' '[:lower:]' | tr '\n' ' ')"
 while [ $# -gt 0 ]; do
 	case "$1" in
 	--allow-term) [ $# -ge 2 ] || usage; allowed="$allowed $(printf '%s' "$2" | tr '[:upper:]' '[:lower:]')"; shift 2 ;;
@@ -35,7 +39,7 @@ warn() { printf 'warning: %s\n' "$1" >&2; }
 
 case "$mode" in
 title) text="$input" ;;
-commit | body)
+commit | body | attribution)
 	if [ "$input" = - ]; then text="$(cat)"; else
 		[ -f "$input" ] || { printf 'error: no such file: %s\n' "$input" >&2; exit 2; }
 		text="$(cat "$input")"
@@ -43,6 +47,7 @@ commit | body)
 	;;
 *) usage ;;
 esac
+text="$(printf '%s' "$text" | tr -d '\r')"
 
 # Git drops these before it stores a commit message, so they are not the message.
 if [ "$mode" = commit ]; then
@@ -79,7 +84,7 @@ check_header() {
 
 check_attribution() {
 	local all="$1" line
-	local trailer='claude|anthropic|grok|x\.ai|openai|chatgpt|gpt|copilot|cursor|codex|gemini|devin|aider|(^|[^a-z])(ai|bot|llm|agent)([^a-z]|$)'
+	local trailer='claude|anthropic|grok|x\.ai|openai|chatgpt|gpt|copilot|cursor|codex|gemini|devin|aider|(:|[[:space:]])(ai|bot|llm|agent)([[:space:]]|<|$)'
 	local tool='claude|anthropic|grok|openai|chatgpt|gpt-?[0-9]|copilot|codex|gemini|llm|an ai([^a-z]|$)|ai (assistant|model|agent|tool)'
 	while IFS= read -r line; do
 		if printf '%s' "$line" | grep -Eiq "^[[:space:]]*(co-authored-by|signed-off-by|assisted-by|generated-by|made-with|reviewed-by|helped-by)[[:space:]]*:.*($trailer)"; then
@@ -187,6 +192,7 @@ EOF
 }
 
 case "$mode" in
+attribution) ;;
 commit) check_commit ;;
 title) check_title ;;
 body) check_body ;;
