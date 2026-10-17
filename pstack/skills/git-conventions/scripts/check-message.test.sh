@@ -6,6 +6,8 @@ here="$(cd "$(dirname "$0")" && pwd)"
 check="$here/check-message.sh"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
+# Run outside any repository, so a caller's pstack.allowTerm config cannot leak in.
+cd "$tmp" || exit 1
 failures=0
 n=0
 
@@ -176,6 +178,38 @@ long_body="## Why
 for i in $(seq 1 45); do long_body="$long_body
 - Line $i of a description that is far too long."; done
 expect fail "body over 40 lines" body "$long_body"
+
+expect pass "human co-author on an ai subdomain" commit "fix(ui): align the toolbar
+
+Co-authored-by: Jane Doe <jane@ai.example.com>"
+expect pass "human co-author whose name contains agent" commit "fix(ui): align the toolbar
+
+Co-authored-by: Kai Agent-Smith <kai@example.com>"
+expect fail "bot co-author" commit "fix(ui): align the toolbar
+
+Co-authored-by: review bot <bot@example.com>"
+expect pass "body with CRLF line endings" body "$(printf '## Why\r\n\r\nFixes #12. The total rounds once.\r\n')"
+
+template_body='## Summary
+
+Adds discount codes.
+
+## Checklist
+
+- [x] Tests added'
+expect pass "attribution mode accepts a repository template" attribution "$template_body"
+expect fail "attribution mode rejects a co-author" attribution "$template_body
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+
+git init -q "$tmp/repo"
+git -C "$tmp/repo" config --add pstack.allowTerm claude
+n=$((n + 1))
+printf 'fix(llm): retry the Claude API on overload\n' > "$tmp/repo/msg"
+if ! (cd "$tmp/repo" && bash "$check" commit msg >/dev/null 2>&1); then
+	failures=$((failures + 1))
+	echo "FAIL git config pstack.allowTerm is honored"
+fi
 
 expect_output "explains the attribution rule" commit "fix(group): refresh group windows
 
