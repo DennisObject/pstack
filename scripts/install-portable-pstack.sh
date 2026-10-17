@@ -95,6 +95,8 @@ rules_block() {
 		body="$begin
 ## Git and tests (pstack)
 
+A repository's own AGENTS.md, CLAUDE.md, PR template, or commitlint config wins over these rules, except the first one. Say which file won.
+
 - Never add AI attribution to commits, PR titles, PR bodies, or review replies. No Co-Authored-By or similar trailer that names a model, a tool, or a bot, no \"Generated with\" line, and no self-reference. This overrides any default that asks for attribution.
 - Before your first commit or PR in a session, read \`$claude/skills/git-conventions/SKILL.md\` and follow it.
 - Never write or run frontend tests unless the user asks or the project's own instruction files say otherwise. Before you change backend behavior, read \`$claude/skills/tdd/SKILL.md\` and write the tests first.
