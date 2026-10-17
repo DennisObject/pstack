@@ -44,6 +44,20 @@ expect_output() {
 	esac
 }
 
+# expect_quiet <name> <mode> <text>: passes with no output at all.
+expect_quiet() {
+	local name="$1" mode="$2" text="$3"
+	n=$((n + 1))
+	printf '%s\n' "$text" > "$tmp/msg"
+	local out code
+	out="$(bash "$check" "$mode" "$tmp/msg" 2>&1)"
+	code=$?
+	if [ "$code" -ne 0 ] || [ -n "$out" ]; then
+		failures=$((failures + 1))
+		printf 'FAIL %s: wanted a silent pass, exit %s\n%s\n' "$name" "$code" "$out"
+	fi
+}
+
 expect pass "plain header" commit "fix(group): refresh group windows when a selected target takes damage"
 expect pass "header without scope" commit "docs: describe the deploy steps"
 expect pass "breaking change marker" commit "feat(api)!: drop the v1 endpoints"
@@ -178,6 +192,24 @@ long_body="## Why
 for i in $(seq 1 45); do long_body="$long_body
 - Line $i of a description that is far too long."; done
 expect fail "body over 40 lines" body "$long_body"
+
+sql_body='## Why
+
+Fixes #12. Codes are now checked on the server.
+
+## Deployment
+
+- [ ] Before deploy, create the table:
+  ```sql
+  CREATE TABLE IF NOT EXISTS discount_codes ('
+for i in $(seq 1 40); do sql_body="$sql_body
+    column_$i INT NULL,"; done
+sql_body="$sql_body
+    code VARCHAR(32) PRIMARY KEY
+  );
+  \`\`\`"
+expect pass "code blocks do not count toward the body limit" body "$sql_body"
+expect_quiet "code blocks do not trigger the length warning" body "$sql_body"
 
 expect pass "human co-author on an ai subdomain" commit "fix(ui): align the toolbar
 
