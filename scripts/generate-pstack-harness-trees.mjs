@@ -13,6 +13,9 @@ const TREE = "claude-code";
 // The harness skill routes to one adapter per harness. Each adapter must map every Cursor name.
 const HARNESS = "pstack-harness";
 const ADAPTERS = ["claude-code.md", "grok.md"].map((name) => `skills/${HARNESS}/references/${name}`);
+// pstack calls these cursor-team-kit skills by name, so the tree ships them beside the pstack skills.
+const COMPANIONS = ["deslop", "control-ui", "control-cli"];
+const TEAM_KIT = join(ROOT, "cursor-team-kit", "skills");
 const MANIFESTS = ["plugin.json", ".claude-plugin/plugin.json"];
 const COMMAND = "node scripts/generate-pstack-harness-trees.mjs";
 const GITHUB = "https://github.com/cursor/plugins";
@@ -21,7 +24,7 @@ const README = `# pstack harness tree
 
 This folder is generated from \`pstack/skills\`, \`pstack/agents\`, \`pstack/LICENSE\`, and \`pstack/plugin.json\`. Do not edit it by hand.
 
-Cursor uses \`pstack/\` directly. Claude Code and Grok install \`${TREE}/\`, as a plugin or through \`scripts/install-portable-pstack.sh\`. The tree leaves out \`pstack/docs\` and \`pstack/README.md\`. A relative link to a pstack file that the tree leaves out points at that file on GitHub \`main\` instead.
+Cursor uses \`pstack/\` directly. Claude Code and Grok install \`${TREE}/\`, as a plugin or through \`scripts/install-portable-pstack.sh\`. The tree also carries \`${COMPANIONS.join("\`, \`")}\` from \`cursor-team-kit/skills\`. It leaves out \`pstack/docs\` and \`pstack/README.md\`. A relative link to a pstack file that the tree leaves out points at that file on GitHub \`main\` instead.
 
 After editing those sources, run \`${COMMAND}\` from the repository root and commit the result.
 `;
@@ -94,9 +97,8 @@ for (const [skill, { usesCursorNames, wrap }] of classes) {
   if (skill !== HARNESS && usesCursorNames.size > 0 && !wrap) problems.push(`skills/${skill}/SKILL.md uses Cursor names but has no H1`);
   for (const key of usesCursorNames) users.set(key, [...(users.get(key) ?? []), skill]);
 }
-const router = readFileSync(join(SKILLS, HARNESS, "SKILL.md"), "utf8");
 for (const path of ADAPTERS) {
-  const adapter = router + readFileSync(join(PSTACK, path), "utf8");
+  const adapter = readFileSync(join(PSTACK, path), "utf8");
   for (const [key, using] of users) {
     if (!adapter.includes(key)) problems.push(`${path} has no row for ${key}, used by ${using.join(", ")}`);
   }
@@ -128,6 +130,9 @@ function render() {
     const path = `skills/${skill}/SKILL.md`;
     const text = files.get(path).bytes.toString("utf8");
     if (wrap) files.get(path).bytes = Buffer.from(text.replace(/^(# .*)\n+/m, `$1\n\n${line}\n\n`));
+  }
+  for (const name of COMPANIONS) {
+    for (const path of walk(join(TEAM_KIT, name))) files.set(`skills/${relative(TEAM_KIT, path)}`, file(path));
   }
   files.set("LICENSE", file(join(PSTACK, "LICENSE")));
   for (const manifest of MANIFESTS) files.set(manifest, file(join(PSTACK, "plugin.json")));
