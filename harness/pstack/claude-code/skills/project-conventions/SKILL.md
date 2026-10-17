@@ -39,7 +39,7 @@ Open two or three files of the same kind as the one you will write: the sibling 
 
 ## 4. Mark the frontend boundary
 
-The **tdd** skill tests backend behavior and leaves frontend code untested unless the user asks. Name which paths in this repository are frontend: components, views, templates, styles, client stores, and client-side helpers inside a frontend app or package. If an instruction file sets a different testing policy, it wins.
+The **tdd** skill tests backend behavior and leaves frontend code untested unless the user asks. Name which paths in this repository are frontend: components, views, templates, styles, client stores, and client-side helpers. Classify by what the code does, not where it runs, so a server-rendered view is frontend and the controller that feeds it is backend. List any path you could not classify. If an instruction file sets a different testing policy, it wins.
 
 ## Output
 

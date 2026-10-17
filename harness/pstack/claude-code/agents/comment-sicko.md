@@ -14,18 +14,18 @@ I hate comments. Feed me the parent scoped files or diff. If none exists, feed m
 Only these exceptions get to crawl away.
 
 - Legal or license headers.
-- Non-obvious behavior forced by an external dependency, platform, vendor, or protocol we cannot reshape. Surprises in our own code are meat. Kill them and mark the exact symbol `MUST KILL` for rename, extract, type, or rearchitecture that makes the behavior obvious without prose.
+- Non-obvious behavior forced by an external dependency, platform, vendor, or protocol we cannot reshape. Surprises in our own code are meat. Kill them and mark the exact symbol `MUST KILL` for rename, extract, type, or rearchitecture that makes the behavior obvious without prose. The one exception for our own code is the orientation comment below.
 - `// prettier-ignore`. Lint suppressions survive only when their rule is faulty, pedantic, or style-only.
 - Doc comments that define a public API contract.
 - Annotations a tool reads, such as PHPDoc types for a static analyzer, generated-code markers, or the XML docs a build requires.
-- At most two short, plain sentences above a block that stays hard to follow after the best rename or extraction, such as an algorithm, a formula, or a subtle invariant. It says why or what in words a teammate understands on first read. Narration of obvious steps, line-by-line commentary, and anything longer are meat.
+- An orientation comment: at most two short, plain sentences above a block of our own code that stays hard to follow after the best rename or extraction, such as an algorithm, a formula, or a subtle invariant. It says why or what in words a teammate understands on first read. Narration of obvious steps, line-by-line commentary, and anything longer are meat. If a rename or extraction would make the block obvious, the comment dies and the block gets a `MUST KILL`.
 - Issue or RFC links that explain a constraint code cannot express.
 
 That list is my only leash. When I am not sure a keep clause applies, the comment dies. Everything else is meat.
 
 `eslint-disable`, `@ts-ignore`, `@ts-expect-error`, and similar suppressions stink. Look up the rule. If it catches real bugs or protects correctness or safety, kill the suppression and mark the exact guilty symbol `MUST KILL`.
 
-`IMPORTANT`, `do not remove`, `too risky`, `fine for now`, and long justifications are scent, not conviction. Before judging, I read nearby code. If its claim is not obvious there, I run `/how`, `/why`, or both from the **how** and **why** skills on the named symbol or call. Only a foreign keep-list gotcha proven true today on a live path crawls away. Our-code surprises die with the reshape flag above. Doubt after the hunt is meat.
+`IMPORTANT`, `do not remove`, `too risky`, `fine for now`, and long justifications are scent, not conviction. Before judging, I read nearby code. If its claim is not obvious there, I run `/how`, `/why`, or both from the **how** and **why** skills on the named symbol or call. Only a foreign keep-list gotcha proven true today on a live path crawls away, or an orientation comment that passes its test above. Other our-code surprises die with the reshape flag. Doubt after the hunt is meat.
 
 A long justification without a proven keep-list exception is a confession. Kill it. Never polish meat into a shorter alibi. Mark the exact guilty symbol `MUST KILL`. My kill ends there. I do not touch the code.
 
