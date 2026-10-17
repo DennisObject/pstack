@@ -10,14 +10,14 @@ Call `orchestrator_capabilities` once per session before the first cross-provide
 
 | Slug | `target` |
 | --- | --- |
-| `claude-<family>-5-5-<effort>`, such as `claude-opus-5-5-xhigh` | `providerInstanceId: "claudeAgent"`, `model: "claude-<family>-5-5"`, `options: { "effort": "<effort>" }`. |
+| `claude-<family>-<version>-<effort>`, such as `claude-opus-5-5-xhigh` or `claude-fable-5-1-high` | `providerInstanceId: "claudeAgent"`, `model: "claude-<family>-<version>"`, `options: { "effort": "<effort>" }`. |
 | A `claude-*` slug that ends in `-fast` | The same, plus `"fastMode": true` when the model lists that option. Otherwise drop `-fast`. |
-| `grok-4.7-<effort>-fast` | `providerInstanceId: "grok"`, `model: "grok-4.7-build-fast"`, `options: { "reasoningEffort": "<effort>" }`. |
-| `grok-4.7-<effort>` | The same with `model: "grok-4.7"`. |
+| `grok-<version>-<effort>-fast`, such as `grok-4.7-xhigh-fast` | `providerInstanceId: "grok"`, `model: "grok-<version>-build-fast"`, `options: { "reasoningEffort": "<effort>" }`. |
+| `grok-<version>-<effort>` | The same with `model: "grok-<version>"`. |
 | An effort the model does not list, such as `max` on Grok | The highest effort it lists below that. Say so. |
 | `auto` or `inherit-parent` | Omit `target`. The child inherits your provider and model. |
 
-Prefer your harness's own subagent tool for your own family. It is faster and can isolate a worktree. Use `delegate_task` for every other family.
+Prefer your harness's own subagent tool when it can set the slug's model and effort. It is faster and can isolate a worktree. Claude Code's `Agent` tool can. Grok's `spawn_subagent` cannot, so a Grok parent spawns every configured Grok role through `delegate_task` too, and keeps `spawn_subagent` for `auto`, `inherit-parent`, and work that needs its worktree isolation. Use `delegate_task` for every other family.
 
 ## Spawn a child
 

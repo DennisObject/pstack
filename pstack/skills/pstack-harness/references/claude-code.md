@@ -34,7 +34,7 @@ pstack skills use Cursor names. In Claude Code, read this file once per session 
 | `claude-<family>-<version>-<effort>[-fast]`, such as `claude-opus-5-5-xhigh` | `model: "opus"` and `effort: "xhigh"`. `model` takes only `opus`, `sonnet`, `haiku`, `fable`. Drop `-fast`. |
 | A `grok-*`, `gpt-*`, or other non-Claude slug | The `Agent` tool cannot run it. Inside T3, spawn it with `delegate_task` per [t3-code.md](t3-code.md). Otherwise, for read-only work, run the Grok CLI headless (below). Otherwise omit `model` so the agent runs on the session model, and say so. |
 | `auto` or `inherit-parent` | Omit `model`. |
-| The `pstack-models.mdc` rule | Claude Code does not load it. Read `~/.config/pstack/models.md` instead, which holds the same role lines. `setup-pstack` writes that file. Never put its role lines in `CLAUDE.md` or `AGENTS.md`. |
+| The `pstack-models.mdc` rule | Claude Code does not load it. Read and write `~/.config/pstack/models.md` instead, which holds the same role lines without frontmatter. [The harness skill](../SKILL.md) says how `setup-pstack` writes it. Never put its role lines in `CLAUDE.md` or `AGENTS.md`. |
 
 ## Paths
 
@@ -58,10 +58,10 @@ pstack skills use Cursor names. In Claude Code, read this file once per session 
 For a read-only seat, such as an `interrogate` reviewer or a `how` explorer, run Grok from `Bash` and read its stdout as the subagent's report:
 
 ```bash
-grok -p "$(cat /tmp/<brief>.md)" -m grok-4.7 --effort high --disallowed-tools "write,search_replace" --output-format plain
+grok --prompt-file /tmp/<brief>.md -m grok-<version> --effort <effort> --permission-mode plan --output-format plain
 ```
 
-Use `-m grok-4.7-build-fast` for a `-fast` slug. Write the brief to a file first, so no shell quoting touches it. Never use this path for a seat that edits files.
+Take the version and the effort from the slug. Add `-build-fast` to the model for a `-fast` slug when `grok models` lists it. Write the brief to a file and pass it with `--prompt-file`, so no shell quoting or argument limit touches it. `--permission-mode plan` keeps the run read-only. Check `git status` afterward anyway. Never use this path for a seat that edits files.
 
 ## Cursor-only features
 

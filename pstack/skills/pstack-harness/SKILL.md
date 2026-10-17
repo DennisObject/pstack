@@ -10,19 +10,21 @@ pstack skills use Cursor names, such as the `Task` tool, Cursor model slugs, and
 
 ## Find your harness
 
-Decide from the tools you have, not from memory.
+If your brief names the harness, trust it. Otherwise decide from the tool names you have, not from memory. Subagents often lack the spawn tool, so check the names every agent has.
 
-- You have an `Agent` tool. You run in Claude Code. Read [references/claude-code.md](references/claude-code.md).
-- You have a `spawn_subagent` tool. You run in Grok. Read [references/grok.md](references/grok.md).
+- Tools named `Read`, `Bash`, and `Edit`. You run in Claude Code. Read [references/claude-code.md](references/claude-code.md).
+- Tools named `read_file`, `run_terminal_cmd`, or `search_replace`. You run in Grok. Read [references/grok.md](references/grok.md).
 - You also have `delegate_task` and `orchestrator_capabilities` from the `t3-code` MCP server. You run inside T3 Code, which adds subagents on other providers. Read [references/t3-code.md](references/t3-code.md) as well.
 
 If none fits, use the rules below, and name each step you could not map in your reply.
+
+**Name the harness in every brief you write,** as in "Harness: Claude Code inside T3. pstack skills are in `<path>`." A subagent then reads the right adapter without guessing.
 
 ## Rules for every harness
 
 **Run another pstack skill by reading its `SKILL.md`.** Skills sit side by side, so the **how** skill is `../how/SKILL.md` from this file. Most pstack skills set `disable-model-invocation: true`. That hides them from the skill tool, not from you, so read the file instead of giving up.
 
-**Read the model config once per session.** It lives at `~/.config/pstack/models.md` and holds the role lines that Cursor keeps in `~/.cursor/rules/pstack-models.mdc`, in the same format, without frontmatter. A missing file or a missing line means the skill's default. `/setup-pstack` writes this file outside Cursor. Never copy role lines into `AGENTS.md` or `CLAUDE.md`.
+**Read the model config once per session.** It lives at `~/.config/pstack/models.md` and holds the role lines that Cursor keeps in `~/.cursor/rules/pstack-models.mdc`, in the same format, without frontmatter. A missing file or a missing line means the skill's default. Never copy role lines into `AGENTS.md` or `CLAUDE.md`.
 
 **Keep model slugs in Cursor form.** Skills and the config name models as `claude-opus-5-5-xhigh` or `grok-4.7-xhigh-fast`. Read a slug as family, version, effort, and an optional `-fast`. Your harness reference turns it into spawn parameters.
 
@@ -42,6 +44,14 @@ Never drop a seat without saying so. A review panel that should hold two model f
 **Use the cursor-team-kit skills that pstack relies on.** The portable install puts `deslop`, `control-ui`, and `control-cli` next to pstack, so read them as `../deslop/SKILL.md` and so on. If one is missing, do its job by hand and say so.
 
 **Tell the user what to type.** The portable install puts pstack in `~/.claude/skills/`, so commands have no prefix, as in `/poteto-mode`. A Claude Code plugin install prefixes them, as in `/pstack:poteto-mode`.
+
+## Run setup-pstack outside Cursor
+
+Follow the **setup-pstack** skill with three changes.
+
+- **Detect models** with `orchestrator_capabilities` inside T3, and write each as a Cursor-form slug per [references/t3-code.md](references/t3-code.md). Without T3, your own subagent tool gives your family, as in `opus`, `sonnet`, `haiku`, and `fable` in Claude Code. Count the other family as available when its CLI runs (`grok --version` or `claude --version`), and say that it serves read-only seats only.
+- **Write** `~/.config/pstack/models.md` with the same lines, without frontmatter.
+- **Validate** each slug against what you detected, by family and effort. A slug that only a headless CLI can run is valid for read-only roles such as reviewers, explorers, and judges, and invalid for code roles.
 
 ## Cursor-only features
 

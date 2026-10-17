@@ -33,11 +33,11 @@ pstack skills use Cursor names. In Grok, read this file once per session after [
 
 | Cursor | Grok |
 | --- | --- |
-| `grok-<version>-<effort>[-fast]`, such as `grok-4.7-xhigh-fast` | Set `model` on `spawn_subagent` when its description lists models. Use `grok-4.7-build-fast` for a `-fast` slug and `grok-4.7` otherwise. `spawn_subagent` has no effort field, so a native subagent runs at the session's effort. Spawn through T3 when the effort matters. |
+| `grok-<version>-<effort>[-fast]`, such as `grok-4.7-xhigh-fast` | Inside T3, spawn it with `delegate_task` per [t3-code.md](t3-code.md), because `spawn_subagent` cannot set the effort and often cannot set the model. Without T3, use `spawn_subagent`, set `model` when its description lists models (`grok-<version>-build-fast` for a `-fast` slug, `grok-<version>` otherwise), and say that the seat ran at the session's effort. |
 | A `claude-*` slug, such as `claude-opus-5-5-xhigh` | `spawn_subagent` cannot run it. Inside T3, spawn it with `delegate_task` per [t3-code.md](t3-code.md). Otherwise, for read-only work, run the Claude CLI headless (below). Otherwise run the role on the session model and say so. |
 | A `gpt-*` or other slug | Run the role on the session model and say so. |
 | `auto` or `inherit-parent` | Omit `model`. |
-| The `pstack-models.mdc` rule | Grok does not load it. Read `~/.config/pstack/models.md` instead, which holds the same role lines. `setup-pstack` writes that file. Never put its role lines in `AGENTS.md`. |
+| The `pstack-models.mdc` rule | Grok does not load it. Read and write `~/.config/pstack/models.md` instead, which holds the same role lines without frontmatter. [The harness skill](../SKILL.md) says how `setup-pstack` writes it. Never put its role lines in `AGENTS.md`. |
 
 Opus is pstack's default for judgment: the design synthesis in `architect`, the lead verdict in `interrogate`, the explainer in `how`, and prose such as a PR body. When you run as the parent on Grok, spawn those roles on their configured Claude model through T3 instead of doing them yourself. Then review what comes back. You still own the result.
 
@@ -63,10 +63,10 @@ Opus is pstack's default for judgment: the design synthesis in `architect`, the 
 For a read-only seat, such as an `interrogate` reviewer or a `how` explainer, run Claude from the shell and read its stdout as the subagent's report:
 
 ```bash
-claude -p "$(cat /tmp/<brief>.md)" --model opus --effort xhigh --permission-mode plan --output-format text
+claude -p --model opus --effort xhigh --permission-mode plan --output-format text < /tmp/<brief>.md
 ```
 
-Use the slug's family as `--model` (`opus`, `sonnet`, `haiku`, `fable`) and its effort as `--effort`. Write the brief to a file first, so no shell quoting touches it. `--permission-mode plan` keeps the run read-only. Never use this path for a seat that edits files.
+Use the slug's family as `--model` (`opus`, `sonnet`, `haiku`, `fable`) and its effort as `--effort`. Write the brief to a file and pass it on stdin, so no shell quoting or argument limit touches it. `--permission-mode plan` keeps the run read-only. Check `git status` afterward anyway. Never use this path for a seat that edits files.
 
 ## Cursor-only features
 
