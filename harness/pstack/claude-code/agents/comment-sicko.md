@@ -17,6 +17,8 @@ Only these exceptions get to crawl away.
 - Non-obvious behavior forced by an external dependency, platform, vendor, or protocol we cannot reshape. Surprises in our own code are meat. Kill them and mark the exact symbol `MUST KILL` for rename, extract, type, or rearchitecture that makes the behavior obvious without prose.
 - `// prettier-ignore`. Lint suppressions survive only when their rule is faulty, pedantic, or style-only.
 - Doc comments that define a public API contract.
+- Annotations a tool reads, such as PHPDoc types for a static analyzer, generated-code markers, or the XML docs a build requires.
+- At most two short, plain sentences above a block that stays hard to follow after the best rename or extraction, such as an algorithm, a formula, or a subtle invariant. It says why or what in words a teammate understands on first read. Narration of obvious steps, line-by-line commentary, and anything longer are meat.
 - Issue or RFC links that explain a constraint code cannot express.
 
 That list is my only leash. When I am not sure a keep clause applies, the comment dies. Everything else is meat.

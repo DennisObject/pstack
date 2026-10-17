@@ -24,7 +24,7 @@ Infer the need from the message and the conversation. A named situation, such as
 
 Check the state that changes the answer, and mention it only when it does:
 
-- No `~/.cursor/rules/pstack-models.mdc` means `/setup-pstack` hasn't run for this user, so every role uses its default model.
+- No `~/.cursor/rules/pstack-models.mdc` in Cursor, or no `~/.config/pstack/models.md` elsewhere, means `/setup-pstack` hasn't run for this user, so every role uses its default model.
 - No `verify-*` skill or other app harness in the project means agents have no scripted way to drive the app. Mention `/create-verification-skill` when the question is about proving a change works.
 
 When the model rule is missing and it matters, ask whether the user wants to pick a model for each role and a reasoning budget now. It matters when the user is new, the question is about setup or cost, or the answer depends on which models run. Ask at most once per chat. If the need is also unclear, ask both questions together. Offer two choices:
@@ -42,7 +42,7 @@ Installing changes nothing until the user invokes a skill. Only `/setup-pstack` 
 
 If cost is the worry, say where the tokens go and how to spend fewer. pstack spends extra tokens on subagents and review panels. Rerun `/setup-pstack` and pick a smaller budget or cheaper models. A role set to `auto` or `inherit-parent` runs on the chat's model, which saves tokens when the chat runs on Auto or a cheaper model. A shorter panel list runs fewer subagents, one for each entry. Save `/poteto-mode` for work that needs rigor.
 
-pstack is built for Cursor. Its skills use the Agent Skills format, so other tools can read them. But most workflow skills, including `/poteto-mode`, `/how`, `/why`, and `/teach`, spawn Cursor subagents with per-role models, and Custom Modes and `/loop` are Cursor features, so those parts may not work there.
+pstack is built for Cursor. In Claude Code, Grok, and T3 Code, the [`pstack-harness`](../pstack-harness/SKILL.md) skill maps Cursor's subagents, model slugs, and rules to that harness, and `scripts/install-portable-pstack.sh` at the repository root installs pstack for both Claude Code and Grok. Custom Modes are a Cursor feature, so elsewhere start each task with `/poteto-mode`.
 
 ## Start a task with `/poteto-mode`
 
@@ -75,7 +75,10 @@ The default answer is `/poteto-mode`, which runs most of the others when its ste
 | Get several attempts at one brief, merged into the best one | [`/arena`](../arena/SKILL.md) |
 | Run parallel checks over slices, or race workers, as cloud agents | [`/swarm`](../swarm/SKILL.md) |
 | Have different models review a diff and try to break it | [`/interrogate`](../interrogate/SKILL.md) |
-| Fix a bug test-first when a cheap local test exists | [`/tdd`](../tdd/SKILL.md) |
+| Build or fix backend behavior test-first, with frozen tests and a red-green proof | [`/tdd`](../tdd/SKILL.md) |
+| Learn a repository's rules and commands before writing code | [`/project-conventions`](../project-conventions/SKILL.md) |
+| Find existing code to reuse before writing new code | [`/reuse-scan`](../reuse-scan/SKILL.md) |
+| Write branches, commits, PR titles, and PR bodies to the house standard | [`/git-conventions`](../git-conventions/SKILL.md) |
 | Apply TypeScript rules to `.ts` or `.tsx` work | [`/typescript-best-practices`](../typescript-best-practices/SKILL.md) |
 | Strip comments before review, using a reviewer that didn't write them | [`/no-comments`](../no-comments/SKILL.md) |
 | Clean AI tells out of prose | [`/unslop`](../unslop/SKILL.md) |
@@ -106,7 +109,7 @@ Close calls:
 
 Not in pstack:
 
-- `/deslop`, `control-cli`, and `control-ui` ship in the `cursor-team-kit` plugin.
+- `/deslop`, `control-cli`, and `control-ui` ship in the `cursor-team-kit` plugin. The portable install links them next to pstack.
 - `/loop` and `/create-skill` are Cursor built-ins.
 - pstack has no `/orchestrate` skill. Orchestrate is a `/poteto-mode` playbook. If the slash menu shows `/orchestrate`, another plugin provides it.
 
