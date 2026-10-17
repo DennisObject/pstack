@@ -10,11 +10,12 @@
 #             Pass --red HEAD right after you commit the tests to confirm red.
 #   --expect  a pattern the red run's output must match, such as the new test's
 #             name, so a red caused by something else does not count.
-#   --tests   a test file the red commit adds whose path does not look like a
-#             test. Repeatable.
-#   --freeze  any other file that must not change after the red commit, such
-#             as a custom test runner. Repeatable.
-#   Every file that looks like a test or a test config is frozen anyway.
+#   --tests   a test file that must be in the red commit. Repeatable.
+#   --freeze  any other file that must not change after the red commit.
+#             Repeatable.
+#   Frozen from the red commit on: every file the red commit adds or changes,
+#   and every file in the repository that looks like a test or a test config.
+#   So put a not-implemented stub in its own commit before the red commit.
 #   The tree must be clean, untracked files included. The script checks out the
 #   red commit, runs the command, and returns to the branch it started on.
 #   Exit 0 when red and green both hold, 1 when they do not, 2 on misuse.
@@ -71,11 +72,10 @@ proven=("${tests[@]+"${tests[@]}"}")
 edited=()
 while IFS="$(printf '\t')" read -r status path; do
 	case "$status" in A | M) ;; *) continue ;; esac
-	is_test "$path" || continue
-	[ "$status" = M ] && edited+=("$path")
-	proven+=("$path")
+	[ "$status" = M ] && is_test "$path" && edited+=("$path")
+	in_list "$path" "${proven[@]+"${proven[@]}"}" || proven+=("$path")
 done < <(git diff-tree --root --no-commit-id --name-status -r "$red_sha")
-[ ${#proven[@]} -gt 0 ] || die "the red commit has no file that looks like a test. Name them with --tests <path>"
+[ ${#proven[@]} -gt 0 ] || die "the red commit adds or changes no file"
 
 if [ ${#edited[@]} -gt 0 ]; then
 	printf 'warning: the red commit edits existing test files: %s\n' "${edited[*]}" >&2
@@ -84,12 +84,18 @@ fi
 
 # Compare contents, so a mode change such as chmod +x is not an edit.
 changed=()
+stubs=()
 while IFS= read -r path; do
 	[ -n "$path" ] || continue
 	is_test "$path" || is_test_config "$path" || in_list "$path" "${proven[@]}" ||
 		in_list "$path" "${freeze[@]+"${freeze[@]}"}" || continue
-	[ "$(git rev-parse -q --verify "$red_sha:$path")" = "$(git rev-parse -q --verify "$head_sha:$path")" ] || changed+=("$path")
+	[ "$(git rev-parse -q --verify "$red_sha:$path")" = "$(git rev-parse -q --verify "$head_sha:$path")" ] && continue
+	changed+=("$path")
+	is_test "$path" || is_test_config "$path" || stubs+=("$path")
 done < <(git diff --name-only "$red_sha" "$head_sha")
+if [ ${#stubs[@]} -gt 0 ]; then
+	die "files from the red commit changed after it: ${stubs[*]}. A fixture must stay as the red commit left it. A not-implemented stub belongs in an earlier commit, before the red commit"
+fi
 [ ${#changed[@]} -eq 0 ] || die "these tests or test configs changed after the red commit: ${changed[*]}. Revert the edits, or fold a corrected test into the red commit and prove red again"
 
 start="$(git symbolic-ref -q --short HEAD || printf '%s' "$head_sha")"

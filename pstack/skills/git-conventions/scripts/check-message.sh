@@ -99,7 +99,8 @@ check_attribution() {
 	done <<EOF
 $all
 EOF
-	local names='claude|anthropic|grok|chatgpt|openai|copilot|gemini|codex' term
+	# "cursor" stays out of this list because databases and UIs use the word too.
+	local names='claude|anthropic|grok|chatgpt|gpt-?[0-9]|openai|copilot|gemini|codex' term
 	for term in $allowed; do
 		names="$(printf '%s' "$names" | tr '|' '\n' | grep -vx "$term" | paste -sd '|' -)"
 	done
@@ -128,6 +129,7 @@ check_commit() {
 check_title() {
 	case "$text" in
 	*$'\n'*) error "a PR title is one line"; return ;;
+	'Revert "'*) return ;;
 	esac
 	check_header "$text"
 }
