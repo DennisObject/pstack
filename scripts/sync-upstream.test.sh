@@ -35,11 +35,17 @@ setup() {
 	mkdir -p "$root/up/pstack/skills/alpha" "$root/up/scripts"
 	printf '# Alpha\n\nLine one.\n' > "$root/up/pstack/skills/alpha/SKILL.md"
 	printf 'upstream\n' > "$root/up/marker"
+	mkdir -p "$root/up/pstack/docs/harness"
+	printf '# Claude Code adapter\n' > "$root/up/pstack/docs/harness/claude-code.md"
 	cat > "$root/up/scripts/generate-pstack-harness-trees.mjs" <<'EOF'
 import { cpSync, existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { join } from "node:path";
 const marker = readFileSync("marker", "utf8").trim();
+if (existsSync("pstack/skills/gamma") && !existsSync("allow-gamma")) {
+	console.log("FAIL gamma has no adapter row");
+	process.exit(1);
+}
 const build = (out) => {
 	rmSync(out, { recursive: true, force: true });
 	for (const skill of readdirSync("pstack/skills")) {
@@ -84,6 +90,7 @@ ok "regenerates the tree with the fork generator" 'grep -q "GEN fork" "$root/for
 ok "leaves the tree up to date" '(cd "$root/fork" && node scripts/generate-pstack-harness-trees.mjs --check >/dev/null)'
 ok "leaves a clean working tree" '[ -z "$(git -C "$root/fork" status --porcelain)" ]'
 ok "records one merge commit" '[ "$(git -C "$root/fork" rev-list --merges --count HEAD)" -eq 1 ]'
+ok "reminds to rerun the installer when skills change" 'grep -q "install-portable-pstack.sh" "$root/out.log"'
 
 sync
 ok "a sync with nothing new exits 0" '[ $rc -eq 0 ]'
@@ -108,6 +115,24 @@ sync --continue
 ok "--continue finishes the merge" '[ $rc -eq 0 ] && [ ! -f "$root/fork/.git/MERGE_HEAD" ] && [ "$(git -C "$root/fork" rev-list --merges --count HEAD)" -eq 1 ]'
 ok "--continue regenerates the conflicted tree" 'grep -q "from both" "$root/fork/harness/pstack/alpha/SKILL.md" && grep -q "GEN fork" "$root/fork/harness/pstack/alpha/SKILL.md"'
 ok "--continue leaves a clean tree" '[ -z "$(git -C "$root/fork" status --porcelain)" ]'
+
+setup
+mkdir -p "$root/up/pstack/skills/gamma"
+printf '# Gamma\n' > "$root/up/pstack/skills/gamma/SKILL.md"
+git -C "$root/up" add -A && git -C "$root/up" commit -qm "feat: add gamma"
+sync
+ok "a generator failure after a clean merge exits 1" '[ $rc -eq 1 ] && grep -q "continue" "$root/out.log"'
+ok "a generator failure leaves the merge open" '[ -f "$root/fork/.git/MERGE_HEAD" ]'
+touch "$root/fork/allow-gamma"
+git -C "$root/fork" add allow-gamma
+sync --continue
+ok "--continue finishes after the generator is fixed" '[ $rc -eq 0 ] && [ ! -f "$root/fork/.git/MERGE_HEAD" ] && grep -q "GEN fork" "$root/fork/harness/pstack/gamma/SKILL.md"'
+
+setup
+printf '# Claude Code adapter\n\nA new row.\n' > "$root/up/pstack/docs/harness/claude-code.md"
+git -C "$root/up" add -A && git -C "$root/up" commit -qm "docs: add an adapter row"
+sync
+ok "flags an upstream change to the Claude Code adapter" '[ $rc -eq 0 ] && grep -q "pstack/docs/harness/claude-code.md" "$root/out.log"'
 
 setup
 printf 'stray\n' >> "$root/fork/marker"
