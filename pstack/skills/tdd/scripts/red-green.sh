@@ -46,7 +46,8 @@ is_test() {
 edited=()
 derived=()
 while IFS="$(printf '\t')" read -r status path; do
-	[ -n "$path" ] && is_test "$path" || continue
+	case "$status" in A | M) ;; *) continue ;; esac
+	is_test "$path" || continue
 	[ "$status" = M ] && edited+=("$path")
 	derived+=("$path")
 done < <(git diff-tree --root --no-commit-id --name-status -r "$red_sha")
@@ -61,10 +62,12 @@ if [ ${#edited[@]} -gt 0 ]; then
 	printf 'warning: change an existing test only when its old assertion was wrong, never to fit new code. Say why in your report.\n' >&2
 fi
 
-if [ "$red_sha" != "$head_sha" ]; then
-	changed="$(git diff --name-only "$red_sha" "$head_sha" -- "${tests[@]}")"
-	[ -z "$changed" ] || die "these tests changed after the red commit: $(printf '%s' "$changed" | paste -sd ' ' -). Revert the edits, or make a new red commit and prove red again"
-fi
+# Compare file contents, so a mode change such as chmod +x is not an edit.
+changed=()
+for path in "${tests[@]}"; do
+	[ "$(git rev-parse -q --verify "$red_sha:$path")" = "$(git rev-parse -q --verify "$head_sha:$path")" ] || changed+=("$path")
+done
+[ ${#changed[@]} -eq 0 ] || die "these tests changed after the red commit: ${changed[*]}. Revert the edits, or make a new red commit and prove red again"
 
 start="$(git symbolic-ref -q --short HEAD || printf '%s' "$head_sha")"
 logs="$(mktemp -d "${TMPDIR:-/tmp}/red-green.XXXXXX")"
