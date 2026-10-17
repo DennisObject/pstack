@@ -4,21 +4,15 @@ Invoked at the end of every other playbook.
 
 **Worktree.** Work from a git worktree off main. Subagents inherit it. Multiple `Task` calls on the same branch each get their own worktree, or `git fetch && git reset --hard origin/<branch>` between them. Dirty branch with unrelated work: patch out, fresh worktree, apply. Snarled worktree: reset from main, redo minimally.
 
-**Commits.** Commit liberally. Rebase into small, ordered commits before opening PRs. Each commit is a future PR: landable, ordered to tell the story. Amend when the fix belongs in a just-made commit. New commit when separable. Commit bodies don't restate the subject. Branch names, headers, and history reshaping follow the **git-conventions** skill, and every message passes its `check-message.sh`.
+**Commits.** Commit liberally. Rebase into small, ordered commits before opening PRs. Each commit is a future PR: landable, ordered to tell the story. Amend when the fix belongs in a just-made commit. New commit when separable. Commit bodies don't restate the subject. Branches, commit messages, and history rewrites follow the **git-conventions** skill.
 
 **PRs.** Run `/deslop` from `cursor-team-kit` over the diff before commit and `/no-comments` before review. Write every PR title, description, and commit body with `/technical-writing` (every layer except Diátaxis, and apply the STE vocabulary rules: one word per action, keep articles, a plain verb over `-ing` where one works), then apply `/unslop`.
 
-**Independent review.** Before the PR opens, run the **interrogate** skill on the diff, so at least one reviewer comes from a different model family than the one that wrote most of the code. Act on its Act On findings, or dismiss each with a concrete reason. Skip it only for a trivial diff, such as docs or a one-line change, and write `skip: <reason>`.
+**Titles.** Conventional Commits `type(scope): subject`, no trailing period. Type such as `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, or `perf`. Scope is the area, such as `pstack` or `poteto-mode`. Subject is short, imperative, and names a real symbol when one carries the change, for example `fix(pstack): retarget opening-a-pr babysit trigger`.
 
-**Titles.** Conventional Commits `type(scope): subject`, no trailing period, per the **git-conventions** skill. Type such as `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, or `perf`. Scope is an area the repository already uses. Subject is short, imperative, lowercase, and names the behavior, for example `fix(group): refresh group windows when a selected target takes damage`.
+**Descriptions.** The PR body is a one-minute briefing, not a lab notebook, for a reviewer who has the diff. The **git-conventions** skill owns its format: only `## Why`, `## Testing`, and `## Deployment`, under 40 lines, with no AI attribution. Your verification evidence goes in your reply, not the body. Run its `check-message.sh` on the title and the body before you create the PR.
 
-**Descriptions.** The PR body is a one-minute briefing, not a lab notebook, for a reviewer who has the diff. Write short, simple sentences with few identifiers, no walls of text. The body becomes the squash commit body, so keep it under 40 lines, and most fit in 15. The **git-conventions** skill owns the format. Use only these `##` headings, in this order, and drop a section with nothing to say:
-
-- `## Why`: always. The issue link, then what was wrong and what happens now, one bullet per fix when there are several. Close with paired PRs and links to screenshots or videos that prove a claim. No SHAs, rebase genealogy, or "based on main" preamble.
-- `## Testing`: only when a person should check something by hand. Checkbox items, each one action and its expected result.
-- `## Deployment`: only when someone must act outside the code deploy, such as SQL, a server setting, an environment variable, or a cron job. Checkbox items that say when, where, and exactly what, with SQL and commands ready to paste.
-
-Your verification evidence, perf numbers, swarm or arena recitals, full SHAs, and "CLEAN" verdicts go in your reply or a linked artifact, not the body. Run `check-message.sh` on the title and the body before you create the PR.
+**Independent review.** Before the PR opens, run the **interrogate** skill on the final diff, so at least one reviewer comes from a different model family than the one that wrote most of the code. Act on its Act On findings, or dismiss each with a concrete reason. Skip it when `interrogate` already ran on this final diff, or for a trivial diff such as docs or a one-line change, and write `skip: <reason>`.
 
 **Forge.** Resolve the forge before the first PR operation and keep that choice for create, edit, view, watch, and merge. GitHub CLI (`gh`) is the default. If `command -v origin` succeeds and Origin can resolve the repository, prefer `origin pr ...`. If Origin is absent or cannot resolve the repository, stay on `gh` and record the fallback. Do not require Graphite (`gt`).
 
