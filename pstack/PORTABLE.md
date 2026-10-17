@@ -89,6 +89,6 @@ Edited upstream files:
 
 ## Limits
 
-- A Grok subagent cannot spawn subagents, so the parent runs every review panel.
+- A Grok session started by `spawn_subagent` cannot spawn its own subagents, so its parent runs the review panels. A Grok thread that T3 started can spawn.
 - Grok's native `spawn_subagent` cannot set the effort, so outside T3 a Grok seat runs at the session's effort.
 - Bugbot, Cursor cloud agents, Cursor Automations, and Custom Modes have no equivalent. The harness skill maps each to the nearest substitute or skips it. The `benny` automation pack stays Cursor-only.

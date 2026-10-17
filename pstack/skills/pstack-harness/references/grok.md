@@ -27,7 +27,9 @@ pstack skills use Cursor names. In Grok, read this file once per session after [
 | `resume` | `resume_from: <subagent id>` works only for a finished subagent of the same type in this session. Otherwise spawn a new agent and paste the earlier result into its brief. |
 | `file_attachments` | List the paths in the brief. |
 
-**A Grok subagent cannot spawn subagents.** The depth limit is one. When a skill tells a delegate to fan out, the parent fans out instead, or the delegate does the slices itself one after another and says so. The parent owns every panel: `interrogate` reviewers, `arena` runners, `swarm` workers, and `how` explorers.
+**Decide whether you can spawn from your tools, not from your role.** Grok allows one level of subagents, so a session started by `spawn_subagent` has no `spawn_subagent` of its own. Every other session can spawn, including a T3 child whose brief calls it a sub-agent. If `spawn_subagent` or `delegate_task` is in your tool list, run every panel the skill asks for. A delegate with neither tool leaves the fan-out to its parent, or does the slices itself one after another and says so.
+
+Never replace the `interrogate` panel with a self-review. A reviewer from another model family is what makes a Grok diff trustworthy. If no spawn tool works, run the Claude CLI headless, as in [Headless Claude](#headless-claude). If that fails too, open your reply with "interrogate did not run" and the reason.
 
 ## Models
 
