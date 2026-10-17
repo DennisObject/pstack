@@ -131,6 +131,81 @@ git switch -q -c other HEAD~1
 implement
 check "a red commit outside HEAD's history is refused" 1 "ancestor" --red "$red" -- bash run-tests.sh
 
+repo missing-tests-path
+add_failing_test
+red="$(git rev-parse HEAD)"
+implement
+check "a --tests path missing from the red commit is refused" 1 "not in the red commit" --red "$red" --tests test/mul_test.sh -- bash run-tests.sh
+
+repo helper-edited
+mkdir -p App.Tests/Builders
+printf 'expected=6\n' > App.Tests/Builders/MulBuilder.cs
+printf '. App.Tests/Builders/MulBuilder.cs; . src/math.sh; [ "$(mul 2 3)" = "$expected" ]\n' > tests/mul_test.sh
+commit "test(math): cover multiplication with a builder"
+red="$(git rev-parse HEAD)"
+printf 'mul() { echo 0; }\n' >> src/math.sh
+printf 'expected=0\n' > App.Tests/Builders/MulBuilder.cs
+commit "feat(math): multiply numbers"
+check "a test helper in a .Tests project edited after red fails the check" 1 "changed after the red commit" --red "$red" -- bash run-tests.sh
+
+repo config-edited
+printf '<phpunit/>\n' > phpunit.xml
+commit "build: add phpunit config"
+add_failing_test
+red="$(git rev-parse HEAD)"
+implement
+printf '<phpunit stopOnFailure="false"/>\n' > phpunit.xml
+commit "build: relax phpunit config"
+check "a test config edited after red fails the check" 1 "phpunit.xml" --red "$red" -- bash run-tests.sh
+
+repo other-test-edited
+add_failing_test
+red="$(git rev-parse HEAD)"
+implement
+printf '. src/math.sh; true\n' > tests/add_test.sh
+commit "test(math): loosen addition"
+check "an existing test edited after red fails the check" 1 "tests/add_test.sh" --red "$red" -- bash run-tests.sh
+
+repo subdirectory
+mkdir -p backend
+git mv src tests run-tests.sh backend/
+commit "refactor: move the backend into backend/"
+cd backend
+add_failing_test
+red="$(git rev-parse HEAD)"
+implement
+check "the command runs from the directory the script was called in" 0 "GREEN" --red "$red" -- bash run-tests.sh
+cd ..
+
+repo expect
+printf 'for t in tests/*_test.sh; do echo "running $t"; bash "$t" || { echo "FAILED $t"; exit 1; }; done\n' > run-tests.sh
+commit "build: name each test as it runs"
+add_failing_test
+red="$(git rev-parse HEAD)"
+implement
+check "--expect passes when the red log names the failure" 0 "GREEN" --red "$red" --expect "FAILED tests/mul_test.sh" -- bash run-tests.sh
+check "--expect fails when red failed for another reason" 1 "expected" --red "$red" --expect "FAILED tests/div_test.sh" -- bash run-tests.sh
+
+repo untracked
+add_failing_test
+red="$(git rev-parse HEAD)"
+implement
+printf 'div() { :; }\n' > src/div.sh
+check "an untracked file is refused" 1 "commit or stash" --red "$red" -- bash run-tests.sh
+
+repo rewrites-tracked
+printf 'v1\n' > snapshot.txt
+commit "test: add a snapshot"
+add_failing_test
+red="$(git rev-parse HEAD)"
+implement
+check "a command that rewrites tracked files fails the check" 1 "changed tracked files" --red "$red" -- bash -c 'echo v2 > snapshot.txt; bash run-tests.sh'
+n=$((n + 1))
+if [ "$(git branch --show-current)" != main ] || [ -n "$(git status --porcelain)" ]; then
+	failures=$((failures + 1))
+	echo "FAIL returns to the branch with a clean tree after a rewrite"
+fi
+
 if [ "$failures" -eq 0 ]; then
 	printf 'ok %s tests\n' "$n"
 else
