@@ -143,7 +143,11 @@ to keep [`/poteto-mode`](./skills/poteto-mode/SKILL.md) on across turns, pick it
 | [`/reflect`](./skills/reflect/SKILL.md) | a long task landed and you want the recipe captured as a skill edit. |
 | [`/correct`](./skills/correct/SKILL.md) | you keep correcting agents for the same mistakes. mines history for mistake classes, fixes each at the highest level that works (architecture, then types, lint, and ci, then tests, with docs last), and keeps a table pairing each rule with what enforces it. |
 | [`/teach`](./skills/teach/SKILL.md) | you want to actually understand a change or subsystem, not just have it summarized. runs how + why and weaves one plain explanation, built up diagram by diagram. |
-| [`/tdd`](./skills/tdd/SKILL.md) | you're fixing a bug and there's a cheap local test path. write the failing test first, then the fix. |
+| [`/tdd`](./skills/tdd/SKILL.md) | you're changing backend behavior. tests come from the requirement, fail first, and stay frozen while the code turns them green; `red-green.sh` proves it. no frontend tests unless asked. |
+| [`/project-conventions`](./skills/project-conventions/SKILL.md) | you're about to write code in a repository and want its own rules, commands, and patterns first. |
+| [`/reuse-scan`](./skills/reuse-scan/SKILL.md) | you're about to write something the codebase may already have. finds it, or justifies new code in one line. |
+| [`/git-conventions`](./skills/git-conventions/SKILL.md) | you're branching, committing, or opening a PR. conventional commits, a why/testing/deployment body, no ai attribution. |
+| [`/pstack-harness`](./skills/pstack-harness/SKILL.md) | you run pstack outside cursor. maps cursor names to claude code, grok, and t3 code. |
 | [`/benchmark-checklist`](./skills/benchmark-checklist/SKILL.md) | you ran a benchmark or measured a speedup or regression. vets the number (limiter, tuning, errors, repeat runs, end-to-end relevance) before you report or act on it. |
 | [`/no-comments`](./skills/no-comments/SKILL.md) | strip comments before review; spawns Comment Sicko, fixes accepted findings, offers encodings for claimed constraints. |
 | [`/typescript-best-practices`](./skills/typescript-best-practices/SKILL.md) | you're reading or editing typescript. grounds the type-system-discipline principle in syntax. |

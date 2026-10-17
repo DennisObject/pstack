@@ -11,10 +11,10 @@ git clone <this fork> ~/Projects/pstack
 
 The script is safe to rerun and never replaces a skill or agent you own. It does five things:
 
-- Links every pstack skill, plus `deslop`, `control-ui`, and `control-cli` from `cursor-team-kit`, into `~/.claude/skills/`. Claude Code and Grok both read that folder.
+- Links every skill of the generated tree into `~/.claude/skills/`. The tree also carries `deslop`, `control-ui`, and `control-cli` from `cursor-team-kit`. Claude Code and Grok both read that folder. A same-named skill of yours would shadow pstack's, so the install stops and names it.
 - Links the `poteto-agent` and `comment-sicko` agents into `~/.claude/agents/` and `~/.grok/agents/`.
 - Writes `~/.config/pstack/models.md` with the default role models, if the file does not exist.
-- Adds a three-line rules block to `~/.claude/CLAUDE.md` and `~/.grok/AGENTS.md`: no AI attribution, Conventional Commits, and no frontend tests unless asked. These apply even outside `/poteto-mode`.
+- Adds a short rules block to `~/.claude/CLAUDE.md` and `~/.grok/AGENTS.md`: no AI attribution, the git and test skills by path, and no frontend tests unless asked. These apply even outside `/poteto-mode`. A repository's own instruction files win, except on attribution.
 - Sets `"attribution": { "commit": "", "pr": "" }` in `~/.claude/settings.json`, so Claude Code adds no co-author trailer.
 
 `--dry-run` prints the plan. `--uninstall` removes the links and the rules block.
@@ -41,7 +41,7 @@ The mode picks a playbook. For a feature or a bug fix it now runs, in order:
 scripts/sync-upstream.sh
 ```
 
-It merges `upstream/main`, rebuilds the generated tree with this fork's generator, and runs every script test. On a real conflict it lists the files. Resolve them, stage them, and run `scripts/sync-upstream.sh --continue`. The links follow the checkout, so rerun the install only when a skill is added or removed.
+It merges `upstream/main`, rebuilds the generated tree with this fork's generator, and runs every script test. On a real conflict, or when the generator rejects an upstream change, it stops with the merge still open. Fix the cause, stage it, and run `scripts/sync-upstream.sh --continue`. It also says when to rerun the install, because skills came or went, and when upstream changed its Claude Code adapter, which you port into the fork's own adapter.
 
 ## Models
 
@@ -52,9 +52,9 @@ How a role reaches its model depends on where the parent runs.
 | Parent | Claude roles | Grok roles |
 | --- | --- | --- |
 | Claude Code in T3 | Native `Agent` tool | T3 `delegate_task` |
-| Grok in T3 | T3 `delegate_task` | Native `spawn_subagent` |
-| Claude Code alone | Native `Agent` tool | `grok -p` headless for read-only seats, else the session model |
-| Grok alone | `claude -p` headless for read-only seats, else the session model | Native `spawn_subagent` |
+| Grok in T3 | T3 `delegate_task` | T3 `delegate_task`, because `spawn_subagent` cannot set the effort |
+| Claude Code alone | Native `Agent` tool | `grok` headless for read-only seats, else the session model |
+| Grok alone | `claude -p` headless for read-only seats, else the session model | Native `spawn_subagent` at the session's effort |
 
 Run inside T3 when you can. It is the only setup where every role runs on its configured family, which is what makes a Grok-led run trustworthy: Opus judges the design and the review, and a model from another family reviews every diff.
 
@@ -73,22 +73,22 @@ pstack carries the workflow. Each repository's `AGENTS.md` carries the facts: co
 
 New files:
 
-- `skills/pstack-harness/` maps Cursor names to Claude Code, Grok, and T3 Code. It holds upstream's Claude Code adapter, moved from `docs/harness/`.
+- `skills/pstack-harness/` maps Cursor names to Claude Code, Grok, and T3 Code. Its Claude Code adapter starts from upstream's `docs/harness/claude-code.md`, which stays in place so upstream edits to it still merge.
 - `skills/git-conventions/`, `skills/project-conventions/`, and `skills/reuse-scan/`.
 - `skills/git-conventions/scripts/check-message.sh` and `skills/tdd/scripts/red-green.sh`, with tests.
 - `../scripts/install-portable-pstack.sh` and `../scripts/sync-upstream.sh`, with tests.
 
 Edited upstream files:
 
-- `skills/tdd/SKILL.md` makes backend changes test-first by default and leaves frontend code untested.
+- `skills/tdd/SKILL.md` is rewritten: backend changes are test-first by default, and frontend code gets no tests. Upstream rarely changes this file.
 - `skills/poteto-mode/SKILL.md` adds three triggers (project conventions and reuse, TDD, git) and allows a short comment on genuinely complex code.
-- `playbooks/feature.md`, `bug-fix.md`, and `refactoring.md` add those steps. `opening-a-pr.md` adds the cross-family review and the short PR body.
-- `agents/comment-sicko.md` keeps tool-read annotations and the short comment above.
-- `agents/poteto-agent.md`, `skills/poteto-help/SKILL.md`, and `skills/interrogate/references/code-quality-review.md` get one or two lines each.
-- `../scripts/generate-pstack-harness-trees.mjs` points every generated skill at the harness skill and checks both adapters.
+- `playbooks/feature.md`, `bug-fix.md`, and `refactoring.md` fold those steps into their existing steps. `opening-a-pr.md` points its description format at `git-conventions` and adds the cross-family review.
+- `agents/comment-sicko.md` and `skills/no-comments/SKILL.md` keep tool-read annotations and the short orientation comment.
+- `agents/poteto-agent.md`, `skills/poteto-help/SKILL.md`, `skills/interrogate/references/code-quality-review.md`, and the skill table in `README.md` get a few lines each.
+- `../scripts/generate-pstack-harness-trees.mjs` points every generated skill at the harness skill, ships the `cursor-team-kit` companions, and checks each adapter on its own.
 
 ## Limits
 
 - A Grok subagent cannot spawn subagents, so the parent runs every review panel.
-- Grok's native `spawn_subagent` has no effort setting. A Grok seat that needs a specific effort runs through T3.
+- Grok's native `spawn_subagent` cannot set the effort, so outside T3 a Grok seat runs at the session's effort.
 - Bugbot, Cursor cloud agents, Cursor Automations, and Custom Modes have no equivalent. The harness skill maps each to the nearest substitute or skips it. The `benny` automation pack stays Cursor-only.
