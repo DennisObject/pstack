@@ -7,8 +7,11 @@
 #   never needs a hand merge. The script rebuilds it with this fork's generator.
 #   On a conflict outside the tree it stops and lists the files. Resolve them,
 #   stage them, and run it again with --continue.
+#   When the generator fails, the merge stays open. Fix the cause, stage it,
+#   and run it again with --continue.
 #   Finally it runs the generator check and every *.test.sh under scripts/ and
-#   pstack/skills/*/scripts/.
+#   pstack/skills/*/scripts/, and says when to port an upstream adapter edit
+#   or rerun the installer.
 set -u
 
 die() { printf 'error: %s\n' "$1" >&2; exit 1; }
@@ -32,38 +35,46 @@ generate() { node scripts/generate-pstack-harness-trees.mjs "$@" >/dev/null; }
 
 source_conflicts() { git diff --name-only --diff-filter=U | grep -v '^harness/pstack/' || true; }
 
-rebuild_tree() {
-	rm -rf harness/pstack
-	generate || die "the generator failed. Fix it, then run with --continue"
+finish_merge() {
+	generate || die "the generator failed. Fix the cause, stage the fix, then run $0 --continue"
 	git add -A harness/pstack
+	git commit -q --no-edit || die "the merge commit failed"
+}
+
+notices() {
+	local adapter skills
+	adapter="$(git diff --name-only HEAD^1 HEAD -- pstack/docs/harness)"
+	skills="$(git diff --name-status HEAD^1 HEAD -- 'pstack/skills/*/SKILL.md' | grep -E '^[AD]' || true)"
+	if [ -n "$adapter" ]; then
+		printf 'note: upstream changed %s. Port what applies into pstack/skills/pstack-harness/references/claude-code.md.\n' "$(printf '%s' "$adapter" | paste -sd ' ' -)"
+	fi
+	if [ -n "$skills" ]; then
+		printf 'note: skills were added or removed. Rerun scripts/install-portable-pstack.sh.\n'
+	fi
 }
 
 if [ "$cont" -eq 1 ]; then
 	[ -f "$merging" ] || die "no merge in progress"
 	left="$(source_conflicts)"
 	[ -z "$left" ] || die "still unresolved: $(printf '%s' "$left" | paste -sd ' ' -)"
-	rebuild_tree
-	git commit -q --no-edit || die "the merge commit failed"
+	finish_merge
+	notices
 else
 	[ ! -f "$merging" ] || die "a merge is in progress. Resolve it, then run with --continue"
 	if ! git diff --quiet || ! git diff --cached --quiet; then
 		die "the working tree has uncommitted changes. commit or stash them first"
 	fi
 	git fetch -q "$remote" "$branch" || die "cannot fetch $branch from $remote"
-	before="$(git rev-parse HEAD)"
-	if git merge -q --no-ff --no-edit "$remote/$branch" >/dev/null 2>&1; then
-		if [ "$(git rev-parse HEAD)" != "$before" ] && ! generate --check; then
-			rebuild_tree
-			git commit -q --amend --no-edit
-		fi
-	else
+	if ! git merge -q --no-ff --no-commit "$remote/$branch" >/dev/null 2>&1; then
 		left="$(source_conflicts)"
 		if [ -n "$left" ]; then
 			printf 'error: resolve these conflicts, stage them, then run %s --continue:\n%s\n' "$0" "$left" >&2
 			exit 1
 		fi
-		rebuild_tree
-		git commit -q --no-edit || die "the merge commit failed"
+	fi
+	if [ -f "$merging" ]; then
+		finish_merge
+		notices
 	fi
 fi
 
