@@ -211,6 +211,10 @@ if ! (cd "$tmp/repo" && bash "$check" commit msg >/dev/null 2>&1); then
 	echo "FAIL git config pstack.allowTerm is honored"
 fi
 
+expect fail "names a GPT model" title "fix(cart): stop trusting gpt-4 prices"
+expect pass "a database cursor is not a tool name" title "perf(db): page orders with a cursor"
+expect pass "git revert title" title 'Revert "fix(cart): round the total once"'
+
 expect_output "explains the attribution rule" commit "fix(group): refresh group windows
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" "attribution"

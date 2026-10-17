@@ -114,7 +114,7 @@ printf 'for t in tests/*_test.sh checks/*.sh; do [ -f "$t" ] && { bash "$t" || e
 commit "test(math): cover multiplication"
 red="$(git rev-parse HEAD)"
 implement
-check "a red commit without test-named files needs --tests" 1 "--tests" --red "$red" -- bash runner.sh
+check "a red commit without test-named files is still frozen and proven" 0 "GREEN" --red "$red" -- bash runner.sh
 check "explicit --tests works" 0 "GREEN" --red "$red" --tests checks/mul.sh -- bash runner.sh
 
 repo modified-existing
@@ -205,6 +205,25 @@ if [ "$(git branch --show-current)" != main ] || [ -n "$(git status --porcelain)
 	failures=$((failures + 1))
 	echo "FAIL returns to the branch with a clean tree after a rewrite"
 fi
+
+repo fixture-edited
+printf 'expected=6\n' > src/expected.env
+printf '. src/expected.env; . src/math.sh; [ "$(mul 2 3)" = "$expected" ]\n' > tests/mul_test.sh
+commit "test(math): cover multiplication against a fixture"
+red="$(git rev-parse HEAD)"
+printf 'mul() { echo 0; }\n' >> src/math.sh
+printf 'expected=0\n' > src/expected.env
+commit "feat(math): multiply numbers"
+check "a fixture from the red commit edited later fails the check" 1 "src/expected.env" --red "$red" -- bash run-tests.sh
+
+repo stub-in-red
+printf 'mul() { return 1; }\n' >> src/math.sh
+printf '. src/math.sh; [ "$(mul 2 3)" = 6 ]\n' > tests/mul_test.sh
+commit "test(math): cover multiplication"
+red="$(git rev-parse HEAD)"
+printf 'mul() { echo $(($1 * $2)); }\n' >> src/math.sh
+commit "feat(math): multiply numbers"
+check "a stub inside the red commit points to its own earlier commit" 1 "earlier commit" --red "$red" -- bash run-tests.sh
 
 if [ "$failures" -eq 0 ]; then
 	printf 'ok %s tests\n' "$n"
