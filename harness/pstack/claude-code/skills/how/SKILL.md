@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # How
 
-In Claude Code, read [the Claude Code adapter](../../docs/harness/claude-code.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code.
+Outside Cursor, read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code, Grok, and T3 Code.
 
 Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
 

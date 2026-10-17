@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Interrogate
 
-In Claude Code, read [the Claude Code adapter](../../docs/harness/claude-code.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code.
+Outside Cursor, read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code, Grok, and T3 Code.
 
 Spawn one reviewer per configured model to adversarially review code changes. The adversarial signal comes from model diversity, not assigned personas. The deliverable is a synthesized verdict. Do NOT auto-apply changes.
 

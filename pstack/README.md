@@ -25,9 +25,9 @@ in claude code:
 /plugin install pstack@cursor-plugins
 ```
 
-claude code prefixes plugin commands and agents, so `/poteto-mode` is `/pstack:poteto-mode`. the [claude code adapter](./docs/harness/claude-code.md) maps every other cursor name.
+claude code prefixes plugin commands and agents, so `/poteto-mode` is `/pstack:poteto-mode`. the [harness skill](./skills/pstack-harness/SKILL.md) maps every other cursor name for claude code, grok, and t3 code.
 
-claude code installs a generated copy of pstack from [`harness/pstack/`](https://github.com/cursor/plugins/tree/main/harness/pstack) at the repository root. after changing `skills/`, `agents/`, `docs/harness/claude-code.md`, or `plugin.json`, run `node scripts/generate-pstack-harness-trees.mjs` from the repository root and commit the result. ci fails until you do.
+claude code installs a generated copy of pstack from [`harness/pstack/`](https://github.com/cursor/plugins/tree/main/harness/pstack) at the repository root. after changing `skills/`, `agents/`, or `plugin.json`, run `node scripts/generate-pstack-harness-trees.mjs` from the repository root and commit the result. ci fails until you do.
 
 ## get started
 

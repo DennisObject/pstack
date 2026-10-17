@@ -10,16 +10,18 @@ const SKILLS = join(PSTACK, "skills");
 // Outside pstack/ so Cursor, which copies the whole plugin folder, does not install this tree too.
 const OUT = join(ROOT, "harness", "pstack");
 const TREE = "claude-code";
-const ADAPTER = "docs/harness/claude-code.md";
+// The harness skill routes to one adapter per harness. Each adapter must map every Cursor name.
+const HARNESS = "pstack-harness";
+const ADAPTERS = ["claude-code.md", "grok.md"].map((name) => `skills/${HARNESS}/references/${name}`);
 const MANIFESTS = ["plugin.json", ".claude-plugin/plugin.json"];
 const COMMAND = "node scripts/generate-pstack-harness-trees.mjs";
 const GITHUB = "https://github.com/cursor/plugins";
 const LINK = /\]\(([^)\s]+)\)/g;
 const README = `# pstack harness tree
 
-This folder is generated from \`pstack/skills\`, \`pstack/agents\`, \`pstack/${ADAPTER}\`, \`pstack/LICENSE\`, and \`pstack/plugin.json\`. Do not edit it by hand.
+This folder is generated from \`pstack/skills\`, \`pstack/agents\`, \`pstack/LICENSE\`, and \`pstack/plugin.json\`. Do not edit it by hand.
 
-Cursor uses \`pstack/\` directly, and Claude Code installs \`${TREE}/\`. The tree leaves out the rest of \`pstack/docs\` and \`pstack/README.md\`. A relative link to a pstack file that the tree leaves out points at that file on GitHub \`main\` instead.
+Cursor uses \`pstack/\` directly. Claude Code and Grok install \`${TREE}/\`, as a plugin or through \`scripts/install-portable-pstack.sh\`. The tree leaves out \`pstack/docs\` and \`pstack/README.md\`. A relative link to a pstack file that the tree leaves out points at that file on GitHub \`main\` instead.
 
 After editing those sources, run \`${COMMAND}\` from the repository root and commit the result.
 `;
@@ -47,6 +49,9 @@ const TERMS = [
   { key: ".cursor/rules/", re: /\.cursor\/rules|always-applied rule/ },
   { key: "agent-transcripts", re: /agent-transcripts|\.cursor\/projects/ },
   { key: "Cursor-only features", re: /Bugbot|Cursor [Aa]utomation|cursor\.(sh|com)\/automations|[Cc]loud [Aa]gent/ },
+  { key: "/loop", re: /\/loop\b/ },
+  { key: "create-skill", re: /create-skill/ },
+  { key: "cursor-team-kit", re: /cursor-team-kit/ },
 ];
 const ROUTE_KEY = "Run another pstack skill";
 
@@ -78,7 +83,7 @@ function classify(skill) {
     if (text.split("\n").some(namesBareSkill)) usesCursorNames.add(ROUTE_KEY);
   }
   const text = readFileSync(join(dir, "SKILL.md"), "utf8");
-  const wrap = usesCursorNames.size > 0 && /^# /m.test(text);
+  const wrap = skill !== HARNESS && usesCursorNames.size > 0 && /^# /m.test(text);
   return { usesCursorNames, wrap };
 }
 
@@ -86,12 +91,15 @@ const classes = new Map(skills.map((skill) => [skill, classify(skill)]));
 const problems = [];
 const users = new Map();
 for (const [skill, { usesCursorNames, wrap }] of classes) {
-  if (usesCursorNames.size > 0 && !wrap) problems.push(`skills/${skill}/SKILL.md uses Cursor names but has no H1`);
+  if (skill !== HARNESS && usesCursorNames.size > 0 && !wrap) problems.push(`skills/${skill}/SKILL.md uses Cursor names but has no H1`);
   for (const key of usesCursorNames) users.set(key, [...(users.get(key) ?? []), skill]);
 }
-const adapter = readFileSync(join(PSTACK, ADAPTER), "utf8");
-for (const [key, using] of users) {
-  if (!adapter.includes(key)) problems.push(`Claude Code adapter has no row for ${key}, used by ${using.join(", ")}`);
+const router = readFileSync(join(SKILLS, HARNESS, "SKILL.md"), "utf8");
+for (const path of ADAPTERS) {
+  const adapter = router + readFileSync(join(PSTACK, path), "utf8");
+  for (const [key, using] of users) {
+    if (!adapter.includes(key)) problems.push(`${path} has no row for ${key}, used by ${using.join(", ")}`);
+  }
 }
 for (const problem of problems) console.log(`FAIL ${problem}`);
 if (problems.length > 0) process.exit(1);
@@ -109,12 +117,13 @@ function has(files, path) {
 }
 
 function render() {
-  // Skills read the adapter at runtime. The guide and the README stay on GitHub.
-  const copies = [...walk(SKILLS), ...walk(join(PSTACK, "agents")), join(PSTACK, ADAPTER)];
+  // Skills read the harness skill at runtime. The guide and the README stay on GitHub.
+  // Every link a skill needs stays inside skills/, so a skill symlinked on its own still resolves.
+  const copies = [...walk(SKILLS), ...walk(join(PSTACK, "agents"))];
   const files = new Map(copies.map((path) => [relative(PSTACK, path), file(path)]));
   const line =
-    `In Claude Code, read [the Claude Code adapter](../../${ADAPTER}) once per session before you follow this skill. ` +
-    "It maps the Cursor names in pstack skills to Claude Code.";
+    `Outside Cursor, read [the pstack harness skill](../${HARNESS}/SKILL.md) once per session before you follow this skill. ` +
+    "It maps the Cursor names in pstack skills to Claude Code, Grok, and T3 Code.";
   for (const [skill, { wrap }] of classes) {
     const path = `skills/${skill}/SKILL.md`;
     const text = files.get(path).bytes.toString("utf8");
