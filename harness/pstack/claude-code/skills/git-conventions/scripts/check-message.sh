@@ -135,11 +135,9 @@ check_title() {
 }
 
 check_body() {
-	local line fence=0 section="" order="" count=0 last=0 first=""
+	local line fence=0 section="" order="" prose=0 length=0 first=""
 	local -A lines checkboxes
 	while IFS= read -r line; do
-		count=$((count + 1))
-		[ -n "${line//[[:space:]]/}" ] && last=$count
 		[ -z "$first" ] && [ -n "${line//[[:space:]]/}" ] && first="$line"
 		case "$line" in
 		*'```'*)
@@ -148,6 +146,10 @@ check_body() {
 			continue
 			;;
 		esac
+		if [ "$fence" -eq 0 ]; then
+			prose=$((prose + 1))
+			[ -n "${line//[[:space:]]/}" ] && length=$prose
+		fi
 		if [ "$fence" -eq 0 ] && printf '%s' "$line" | grep -Eq '^#{1,6}[[:space:]]'; then
 			local heading="${line%"${line##*[! ]}"}"
 			case "$heading" in
@@ -186,10 +188,11 @@ EOF
 			error "## $s needs at least one checkbox item ('- [ ] ...')"
 		fi
 	done
-	if [ "$last" -gt 40 ]; then
-		error "body is $last lines. Keep it a one-minute read, never over 40 lines"
-	elif [ "$last" -gt 20 ]; then
-		warn "body is $last lines. Most bodies fit in 15"
+	# Code blocks hold SQL and commands to paste, so only prose counts.
+	if [ "$length" -gt 40 ]; then
+		error "body is $length lines outside code blocks. Keep it a one-minute read, never over 40 lines"
+	elif [ "$length" -gt 20 ]; then
+		warn "body is $length lines outside code blocks. Most bodies fit in 15"
 	fi
 }
 

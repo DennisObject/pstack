@@ -72,7 +72,7 @@ Resolve a conflict by intent, never by picking a side. For each conflicted file,
 
 **Title.** The same format as a commit header. A one-commit PR uses that commit's header. A larger PR names the whole change, as in "fix(galaxy-gates): stop shield healing on gate bosses and fix Kronos completion".
 
-**Body.** A one-minute read for a reviewer who has the diff. It has up to three sections, in this order. Drop a section that has nothing to say. Most bodies fit in 15 lines. Never exceed 40.
+**Body.** A one-minute read for a reviewer who has the diff. It has up to three sections, in this order. Drop a section that has nothing to say. Most bodies fit in 15 lines of prose. Never exceed 40. Code blocks do not count, so never squeeze SQL or a command onto one line to save space.
 
 - `## Why` is always there. Start with the issue link (`Fixes #731 and #732.` or `Part of #711.`). Then say what was wrong and what happens now, in plain sentences a teammate can follow without opening the code. Use one bullet per fix when a PR fixes several things. Close with paired PRs and screenshot or video links when they prove a claim. A performance change states its one primary number here, as `before → after` with the unit.
 - `## Testing` appears only when a person should check something by hand: UI, gameplay, a visual change, or an integration that no automated test covers. Every item is a checkbox with one action and its expected result. Skip what CI already proves.
