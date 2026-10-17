@@ -86,6 +86,13 @@ printf '. src/math.sh; [ "$(mul 2 3)" = 0 ]\n' > tests/mul_test.sh
 commit "feat(math): multiply numbers"
 check "tests edited after the red commit fail the check" 1 "changed after the red commit" --red "$red" -- bash run-tests.sh
 
+repo mode-only
+add_failing_test
+red="$(git rev-parse HEAD)"
+chmod +x tests/mul_test.sh
+implement
+check "a mode-only change to a test is not an edit" 0 "GREEN" --red "$red" -- bash run-tests.sh
+
 repo still-red
 add_failing_test
 red="$(git rev-parse HEAD)"
