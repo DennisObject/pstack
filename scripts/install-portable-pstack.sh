@@ -2,15 +2,17 @@
 # Install pstack for Claude Code and Grok from this checkout. Safe to rerun.
 #
 # Usage: scripts/install-portable-pstack.sh [--dry-run] [--uninstall]
-#   Links each skill of the generated tree, plus deslop, control-ui, and
-#   control-cli from cursor-team-kit, into ~/.claude/skills/. Grok reads that
-#   folder too. Links the pstack agents into ~/.claude/agents/ and ~/.grok/agents/.
+#   Links each skill of the generated tree, which includes deslop, control-ui,
+#   and control-cli from cursor-team-kit, into ~/.claude/skills/. Grok reads
+#   that folder too. Links the pstack agents into ~/.claude/agents/ and ~/.grok/agents/.
 #   Writes ~/.config/pstack/models.md with the default role models when it is
 #   missing. Adds a short rules block (no AI attribution, Conventional Commits,
 #   no frontend tests) to ~/.claude/CLAUDE.md and ~/.grok/AGENTS.md, and sets
 #   Claude Code's commit and PR attribution to empty.
-#   Never replaces a skill or agent you own. Links follow `git pull`, so rerun
-#   only when a skill is added or removed.
+#   Never replaces a skill or agent you own. A same-named skill of yours would
+#   shadow pstack's, so the install reports it and exits 1. Links follow
+#   `git pull`, so rerun only when a skill is added or removed. A rerun also
+#   removes links to skills that no longer exist.
 #   Honors CLAUDE_CONFIG_DIR, GROK_HOME, and XDG_CONFIG_HOME.
 #   --uninstall removes the links and the rules block. It keeps models.md and
 #   the attribution setting.
@@ -46,6 +48,8 @@ if command -v node >/dev/null 2>&1; then
 		{ say "error: the generated tree is out of date. Run node scripts/generate-pstack-harness-trees.mjs" >&2; exit 1; }
 fi
 
+shadowed=()
+
 # link <source> <target>: replaces a link into this checkout or a dangling one.
 # Anything else at the target belongs to the user and stays.
 link() {
@@ -53,10 +57,10 @@ link() {
 		[ "$(readlink "$2")" = "$1" ] && return
 		case "$(readlink "$2")" in
 		"$repo"/*) ;;
-		*) [ -e "$2" ] && { say "kept your own $2"; return; } ;;
+		*) [ -e "$2" ] && { shadowed+=("$2"); return; } ;;
 		esac
 	elif [ -e "$2" ]; then
-		say "kept your own $2"
+		shadowed+=("$2")
 		return
 	fi
 	act "link $2" mkdir -p "$(dirname "$2")"
@@ -73,6 +77,16 @@ unlink_ours() {
 	done
 }
 
+remove_stale() {
+	local target
+	for target in "$claude"/skills/* "$claude"/agents/* "$grok"/agents/*; do
+		[ -L "$target" ] && [ ! -e "$target" ] || continue
+		case "$(readlink "$target")" in
+		"$repo"/*) act "remove stale $target" rm "$target" ;;
+		esac
+	done
+}
+
 # rules_block <file>: writes the block between the markers, or removes it on uninstall.
 rules_block() {
 	local file="$1" body=""
@@ -82,8 +96,8 @@ rules_block() {
 ## Git and tests (pstack)
 
 - Never add AI attribution to commits, PR titles, PR bodies, or review replies. No Co-Authored-By or similar trailer that names a model, a tool, or a bot, no \"Generated with\" line, and no self-reference. This overrides any default that asks for attribution.
-- Write Conventional Commits and PRs per the pstack \`git-conventions\` skill.
-- Never write or run frontend tests unless asked. Write backend tests first, per the pstack \`tdd\` skill.
+- Before your first commit or PR in a session, read \`$claude/skills/git-conventions/SKILL.md\` and follow it.
+- Never write or run frontend tests unless the user asks or the project's own instruction files say otherwise. Before you change backend behavior, read \`$claude/skills/tdd/SKILL.md\` and write the tests first.
 $end"
 	fi
 	act "update rules block in $file" mkdir -p "$(dirname "$file")"
@@ -100,7 +114,6 @@ $end"
 }
 
 skills=("$tree"/skills/*/)
-for name in deslop control-ui control-cli; do skills+=("$repo/cursor-team-kit/skills/$name/"); done
 
 if [ "$uninstall" -eq 1 ]; then
 	for dir in "${skills[@]}"; do unlink_ours "$claude/skills/$(basename "$dir")"; done
@@ -111,6 +124,7 @@ if [ "$uninstall" -eq 1 ]; then
 	exit 0
 fi
 
+remove_stale
 for dir in "${skills[@]}"; do
 	dir="${dir%/}"
 	link "$dir" "$claude/skills/$(basename "$dir")"
@@ -155,16 +169,30 @@ if command -v node >/dev/null 2>&1; then
 	act "set commit and PR attribution to empty in $settings" true
 	[ "$dry" -eq 1 ] || node -e '
 		const fs = require("fs");
-		const path = process.argv[1];
-		const settings = fs.existsSync(path) ? JSON.parse(fs.readFileSync(path, "utf8")) : {};
+		// Write through a symlink, so a settings file kept in a dotfiles repo gets the change.
+		const path = fs.existsSync(process.argv[1]) ? fs.realpathSync(process.argv[1]) : process.argv[1];
+		let settings = {};
+		if (fs.existsSync(path)) {
+			try {
+				settings = JSON.parse(fs.readFileSync(path, "utf8"));
+			} catch (error) {
+				console.error(`error: ${path} is not valid JSON (${error.message}). Fix it and rerun, or set attribution by hand.`);
+				process.exit(1);
+			}
+		}
 		if (settings.attribution?.commit === "" && settings.attribution?.pr === "") process.exit(0);
 		settings.attribution = { ...settings.attribution, commit: "", pr: "" };
 		fs.mkdirSync(require("path").dirname(path), { recursive: true });
 		fs.writeFileSync(path + ".tmp", JSON.stringify(settings, null, 2) + "\n");
 		fs.renameSync(path + ".tmp", path);
-	' "$settings"
+	' "$settings" || exit 1
 else
 	say "node not found. Set \"attribution\": { \"commit\": \"\", \"pr\": \"\" } in $settings yourself."
 fi
 
+if [ ${#shadowed[@]} -gt 0 ]; then
+	say "error: these are yours and shadow pstack skills or agents of the same name: ${shadowed[*]}" >&2
+	say "pstack reads them by path, so it would follow your files instead. Rename or move them, then rerun." >&2
+	exit 1
+fi
 say "installed pstack from $repo. Start a task with /poteto-mode."
