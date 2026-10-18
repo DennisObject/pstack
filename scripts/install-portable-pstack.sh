@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# Install pstack for Claude Code and Grok from this checkout. Safe to rerun.
+# Install pstack for Claude Code from this checkout. Safe to rerun.
 #
 # Usage: scripts/install-portable-pstack.sh [--dry-run] [--uninstall]
 #   Links each skill of the generated tree, which includes deslop, control-ui,
-#   and control-cli from cursor-team-kit, into ~/.claude/skills/. Grok reads
-#   that folder too. Links the pstack agents into ~/.claude/agents/ and ~/.grok/agents/.
+#   and control-cli from cursor-team-kit, into ~/.claude/skills/. Links the
+#   pstack agents into ~/.claude/agents/.
 #   Writes ~/.config/pstack/models.md with the default role models when it is
 #   missing. Adds a short rules block (no AI attribution, Conventional Commits,
-#   no frontend tests) to ~/.claude/CLAUDE.md and ~/.grok/AGENTS.md, and sets
+#   no frontend tests) to ~/.claude/CLAUDE.md, and sets
 #   Claude Code's commit and PR attribution to empty.
 #   Never replaces a skill or agent you own. A same-named skill of yours would
 #   shadow pstack's, so the install reports it and exits 1. Links follow
 #   `git pull`, so rerun only when a skill is added or removed. A rerun also
 #   removes links to skills that no longer exist.
-#   Honors CLAUDE_CONFIG_DIR, GROK_HOME, and XDG_CONFIG_HOME.
+#   Honors CLAUDE_CONFIG_DIR and XDG_CONFIG_HOME.
 #   --uninstall removes the links and the rules block. It keeps models.md and
 #   the attribution setting.
 set -u
@@ -31,7 +31,6 @@ done
 repo="$(cd "$(dirname "$0")/.." && pwd)"
 tree="$repo/harness/pstack/claude-code"
 claude="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
-grok="${GROK_HOME:-$HOME/.grok}"
 config="${XDG_CONFIG_HOME:-$HOME/.config}/pstack"
 begin='<!-- pstack-portable:begin -->'
 end='<!-- pstack-portable:end -->'
@@ -79,7 +78,7 @@ unlink_ours() {
 
 remove_stale() {
 	local target
-	for target in "$claude"/skills/* "$claude"/agents/* "$grok"/agents/*; do
+	for target in "$claude"/skills/* "$claude"/agents/*; do
 		[ -L "$target" ] && [ ! -e "$target" ] || continue
 		case "$(readlink "$target")" in
 		"$repo"/*) act "remove stale $target" rm "$target" ;;
@@ -119,9 +118,8 @@ skills=("$tree"/skills/*/)
 
 if [ "$uninstall" -eq 1 ]; then
 	for dir in "${skills[@]}"; do unlink_ours "$claude/skills/$(basename "$dir")"; done
-	for file in "$tree"/agents/*.md; do unlink_ours "$claude/agents/$(basename "$file")" "$grok/agents/$(basename "$file")"; done
+	for file in "$tree"/agents/*.md; do unlink_ours "$claude/agents/$(basename "$file")"; done
 	rules_block "$claude/CLAUDE.md"
-	rules_block "$grok/AGENTS.md"
 	say "uninstalled. Kept $config/models.md and the Claude Code attribution setting."
 	exit 0
 fi
@@ -133,7 +131,6 @@ for dir in "${skills[@]}"; do
 done
 for file in "$tree"/agents/*.md; do
 	link "$file" "$claude/agents/$(basename "$file")"
-	link "$file" "$grok/agents/$(basename "$file")"
 done
 
 if [ ! -f "$config/models.md" ]; then
@@ -143,29 +140,27 @@ if [ ! -f "$config/models.md" ]; then
 # `inherit-parent` or `auto` as a value: the role runs on the parent chat model. Alias entries in a panel list still count toward its fan-out.
 # Run /setup-pstack to change these.
 # budget: large (xhigh)
-# speed: fast
 feature, refactoring: claude-sonnet-5-5-xhigh
 bug-fix: claude-sonnet-5-5-xhigh
 perf-issue: claude-sonnet-5-5-xhigh
-hillclimb: grok-4.7-xhigh-fast
+hillclimb: claude-sonnet-5-5-xhigh
 judgment and prose: claude-opus-5-5-xhigh
 hardest tasks: claude-opus-5-5-xhigh
-how explorer: grok-4.7-xhigh-fast
+how explorer: claude-sonnet-5-5-xhigh
 how explainer: claude-opus-5-5-xhigh
-why investigators: grok-4.7-xhigh-fast
+why investigators: claude-sonnet-5-5-xhigh
 why synthesizer: claude-opus-5-5-xhigh
-reflect tooling: grok-4.7-xhigh-fast
+reflect tooling: claude-sonnet-5-5-xhigh
 reflect judgment, divergent, synthesizer: claude-opus-5-5-xhigh
-arena runners: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
-arena cross-judge pool: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
-swarm workers: grok-4.7-xhigh-fast
-architect runners: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
+arena runners: claude-opus-5-5-xhigh, claude-sonnet-5-5-xhigh
+arena cross-judge pool: claude-opus-5-5-xhigh, claude-sonnet-5-5-xhigh
+swarm workers: claude-sonnet-5-5-xhigh
+architect runners: claude-opus-5-5-xhigh, claude-sonnet-5-5-xhigh
 interrogate reviewers: claude-opus-5-5-xhigh, claude-sonnet-5-5-xhigh
 EOF
 fi
 
 rules_block "$claude/CLAUDE.md"
-rules_block "$grok/AGENTS.md"
 
 settings="$claude/settings.json"
 if command -v node >/dev/null 2>&1; then

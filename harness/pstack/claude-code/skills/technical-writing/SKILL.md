@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Technical writing
 
-Outside Cursor, read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code, Grok, and T3 Code.
+Outside Cursor, read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code.
 
 Write so a tired engineer understands on the first read. Apply all four layers.
 

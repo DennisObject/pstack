@@ -12,7 +12,7 @@ Invoked at the end of every other playbook.
 
 **Descriptions.** The PR body is a one-minute briefing, not a lab notebook, for a reviewer who has the diff. The **git-conventions** skill owns its format: only `## Why`, `## Testing`, and `## Deployment`, under 40 lines, with no AI attribution. Your verification evidence goes in your reply, not the body. Run its `check-message.sh` on the title and the body before you create the PR.
 
-**Independent review.** Before the PR opens, run the **interrogate** skill on the final diff. Unless it is a small change (Non-negotiables), at least one reviewer comes from a model family that did not write most of the code. If no configured reviewer does, add one on the `swarm workers` model. Act on its Act On findings, or dismiss each with a concrete reason. Skip it when `interrogate` already ran on this final diff, or for a trivial diff such as docs or a one-line change, and write `skip: <reason>`.
+**Independent review.** Before the PR opens, run the **interrogate** skill on the final diff. Act on its Act On findings, or dismiss each with a concrete reason. Skip it when `interrogate` already ran on this final diff, or for a trivial diff such as docs or a one-line change, and write `skip: <reason>`.
 
 **Forge.** Resolve the forge before the first PR operation and keep that choice for create, edit, view, watch, and merge. GitHub CLI (`gh`) is the default. If `command -v origin` succeeds and Origin can resolve the repository, prefer `origin pr ...`. If Origin is absent or cannot resolve the repository, stay on `gh` and record the fallback. Do not require Graphite (`gt`).
 

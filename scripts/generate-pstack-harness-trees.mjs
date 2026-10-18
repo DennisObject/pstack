@@ -10,9 +10,9 @@ const SKILLS = join(PSTACK, "skills");
 // Outside pstack/ so Cursor, which copies the whole plugin folder, does not install this tree too.
 const OUT = join(ROOT, "harness", "pstack");
 const TREE = "claude-code";
-// The harness skill routes to one adapter per harness. Each adapter must map every Cursor name.
+// The Claude Code adapter must map every Cursor name the skills use.
 const HARNESS = "pstack-harness";
-const ADAPTERS = ["claude-code.md", "grok.md"].map((name) => `skills/${HARNESS}/references/${name}`);
+const ADAPTERS = [`skills/${HARNESS}/references/claude-code.md`];
 // pstack calls these cursor-team-kit skills by name, so the tree ships them beside the pstack skills.
 const COMPANIONS = ["deslop", "control-ui", "control-cli"];
 const TEAM_KIT = join(ROOT, "cursor-team-kit", "skills");
@@ -24,7 +24,7 @@ const README = `# pstack harness tree
 
 This folder is generated from \`pstack/skills\`, \`pstack/agents\`, \`pstack/LICENSE\`, and \`pstack/plugin.json\`. Do not edit it by hand.
 
-Cursor uses \`pstack/\` directly. Claude Code and Grok install \`${TREE}/\`, as a plugin or through \`scripts/install-portable-pstack.sh\`. The tree also carries \`${COMPANIONS.join("\`, \`")}\` from \`cursor-team-kit/skills\`. It leaves out \`pstack/docs\` and \`pstack/README.md\`. A relative link to a pstack file that the tree leaves out points at that file on GitHub \`main\` instead.
+Cursor uses \`pstack/\` directly. Claude Code installs \`${TREE}/\`, as a plugin or through \`scripts/install-portable-pstack.sh\`. The tree also carries \`${COMPANIONS.join("\`, \`")}\` from \`cursor-team-kit/skills\`. It leaves out \`pstack/docs\` and \`pstack/README.md\`. A relative link to a pstack file that the tree leaves out points at that file on GitHub \`main\` instead.
 
 After editing those sources, run \`${COMMAND}\` from the repository root and commit the result.
 `;
@@ -125,7 +125,7 @@ function render() {
   const files = new Map(copies.map((path) => [relative(PSTACK, path), file(path)]));
   const line =
     `Outside Cursor, read [the pstack harness skill](../${HARNESS}/SKILL.md) once per session before you follow this skill. ` +
-    "It maps the Cursor names in pstack skills to Claude Code, Grok, and T3 Code.";
+    "It maps the Cursor names in pstack skills to Claude Code.";
   for (const [skill, { wrap }] of classes) {
     const path = `skills/${skill}/SKILL.md`;
     const text = files.get(path).bytes.toString("utf8");

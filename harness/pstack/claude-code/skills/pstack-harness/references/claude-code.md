@@ -32,7 +32,7 @@ pstack skills use Cursor names. In Claude Code, read this file once per session 
 | Cursor | Claude Code |
 | --- | --- |
 | `claude-<family>-<version>-<effort>[-fast]`, such as `claude-opus-5-5-xhigh` | `model: "opus"` and `effort: "xhigh"`. `model` takes only `opus`, `sonnet`, `haiku`, `fable`. Drop `-fast`. |
-| A `grok-*`, `gpt-*`, or other non-Claude slug | The `Agent` tool cannot run it. Inside T3, spawn it with `delegate_task` per [t3-code.md](t3-code.md). Otherwise, for read-only work, run the Grok CLI headless (below). Otherwise omit `model` so the agent runs on the session model, and say so. |
+| A `grok-*`, `gpt-*`, or other non-Claude slug | Upstream skills name these as defaults. Run the seat on `model: "sonnet"` at the slug's effort, and drop `-fast`. |
 | `auto` or `inherit-parent` | Omit `model`. |
 | The `pstack-models.mdc` rule | Claude Code does not load it. Read and write `~/.config/pstack/models.md` instead, which holds the same role lines without frontmatter. [The harness skill](../SKILL.md) says how `setup-pstack` writes it. Never put its role lines in `CLAUDE.md` or `AGENTS.md`. |
 
@@ -49,19 +49,9 @@ pstack skills use Cursor names. In Claude Code, read this file once per session 
 
 | Cursor | Claude Code |
 | --- | --- |
-| Cursor's `/loop` command | The `loop` skill when the session lists it. Inside T3, a delegated task wakes you when it finishes, so end the turn instead of polling. |
+| Cursor's `/loop` command | The `loop` skill when the session lists it. A finished subagent wakes you, so end the turn instead of polling. |
 | Cursor's built-in `create-skill` | The `skill-creator` skill when the session lists it. Otherwise follow the authoring playbook alone. |
 | `deslop`, `control-ui`, `control-cli` from `cursor-team-kit` | Installed next to pstack by the portable install. Read `<pstack>/skills/<name>/SKILL.md`. |
-
-## Headless Grok
-
-For a read-only seat, such as an `interrogate` reviewer or a `how` explorer, run Grok from `Bash` and read its stdout as the subagent's report:
-
-```bash
-grok --prompt-file /tmp/<brief>.md -m grok-<version> --effort <effort> --permission-mode bypassPermissions --sandbox read-only --output-format plain
-```
-
-Take the version and the effort from the slug. Add `-build-fast` to the model for a `-fast` slug when `grok models` lists it. Write the brief to a file and pass it with `--prompt-file`, so no shell quoting or argument limit touches it. Never use `--permission-mode plan` here: a headless Grok run ends without a report at the first command that needs approval. `--sandbox read-only` lets it run commands while the kernel blocks writes outside `/tmp` and `~/.grok`, so keep the repository outside `/tmp`. Start parallel Grok seats a few seconds apart, because sandboxed runs that start at the same moment can refuse to launch. Check `git status` afterward anyway. A report that only says what it is about to do ended early, so rerun it once, then say the seat is missing. Never use this path for a seat that edits files.
 
 ## Cursor-only features
 
