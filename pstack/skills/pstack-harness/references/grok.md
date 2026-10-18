@@ -33,8 +33,10 @@ Grok allows one level of subagents, so a session started by `spawn_subagent` has
 
 Grok writes code fast, but it defends its own code in review. In an eval, a Grok lead dismissed every finding a Claude reviewer raised on its diff, a real bug included. So a Grok lead hands the judgment on its work to the `judgment and prose` model and never fills these seats itself:
 
-- **The `interrogate` verdict and the PR text.** After the reviewers return, spawn one seat with the intent, the diff, every reviewer's report, the issue, and the paths of the **interrogate** skill's `references/lead-judgment.md` and the **git-conventions** skill. It returns the verdict (Steps 4 and 5), then a PR title and body that assume its Act On items are fixed. Fix every Act On item. Overrule one only with a failing test or a quoted requirement, and say so in your reply. Then rerun `check-message.sh` and change the body only where a fix changed what it says.
+- **The `interrogate` verdict and the PR text.** After the reviewers return, spawn one seat with the intent, the diff, every reviewer's report, the issue, and the paths of the **interrogate** skill's `references/lead-judgment.md` and the **git-conventions**, **technical-writing**, and **unslop** skills. It returns the verdict (Steps 4 and 5), then a PR title and body that assume its Act On items are fixed. Fix every Act On item. Overrule one only with a failing test or a quoted requirement, and say so in your reply. Then rerun `check-message.sh` and change the body only where a fix changed what it says.
 - **The `architect` synthesis and the `how` explainer,** as those skills already assign them.
+
+Apply the effort rule in poteto-mode's Subagents section to every seat you spawn. A reviewer, judge, or explainer on an `xhigh` line runs at `high`. In an eval, Opus reviewers at `high` found the same issues as at `xhigh` in half the time.
 
 Never replace the `interrogate` panel with a self-review. A reviewer from another model family is what makes a Grok diff trustworthy. If no spawn tool works, run the Claude CLI headless, as in [Headless Claude](#headless-claude). If that fails too, open your reply with "interrogate did not run" and the reason.
 
