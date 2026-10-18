@@ -27,13 +27,13 @@ Start each task with `/poteto-mode`, the goal, and how to tell it is done.
 /poteto-mode group windows show stale HP when someone else damages a selected target. fix it. done means a regression test that failed before the fix passes, and the PR body is ready.
 ```
 
-**Start the thread on Claude and let Grok write the code.** The thread's model is the lead. It owns the design, the tests, and the review verdict, and it hands the code to Grok through the `feature`, `bug-fix`, and `refactoring` lines. The same discount-code task took these times with every check passing:
+**Start the thread on Claude.** The thread's model is the lead. It owns the design, the tests, and the review verdict, and hands the code to a delegate. The same discount-code task took these times with every check passing:
 
 | Lead | Time | Use it for |
 | --- | --- | --- |
 | Sonnet 5.5 | 5.5 min | Everyday work. It wrote the simplest code. |
 | Opus 5.5 | not measured | Hard design work, where judgment matters more than speed. |
-| Grok 4.7 Fast or Grok 4.7 | 14 to 16 min | When you want Grok throughout. It hands the review verdict and the PR text to Claude, and its code came out slightly more elaborate. |
+| Grok 4.7 Fast or Grok 4.7 | 14 to 16 min | When you want Grok to lead. It hands the review verdict and the PR text to Claude. |
 
 The mode picks a playbook. For a feature or a bug fix it now runs, in order:
 
@@ -53,11 +53,15 @@ It merges `upstream/main`, rebuilds the generated tree with this fork's generato
 
 ## Models
 
-`~/.config/pstack/models.md` holds one line per role in Cursor's slug form, such as `grok-4.7-xhigh-fast` or `claude-opus-5-5-xhigh`. `/setup-pstack` rewrites it. The defaults follow upstream: Grok writes code, and Opus does design synthesis, review judgment, and prose.
+`~/.config/pstack/models.md` holds one line per role in Cursor's slug form, such as `grok-4.7-xhigh-fast` or `claude-opus-5-5-xhigh`. `/setup-pstack` rewrites it. Opus does design synthesis, review judgment, and prose, as upstream has it. The install departs from upstream on who writes code:
+
+- **Sonnet writes everyday code**, through the `feature, refactoring`, `bug-fix`, and `perf-issue` lines. In an eval it wrote the same code as Grok in a third of the time.
+- **Opus writes the hardest changes**, through the `hardest tasks` line.
+- **Grok writes code where volume pays**: bulk edits across many files, parallel attempts through the `swarm workers` and `hillclimb` lines, and the second design in `architect` and `arena`. That load stays off your Claude limits.
 
 Its `# speed` line decides whether the `-fast` slugs stay fast. `fast`, the install default, keeps them fast on every spawn, so run times stay steady. A fast Grok seat finished about twice as fast in an eval and costs about twice as much per token. `standard` follows upstream and uses fast mode only for urgent jobs.
 
-The install also departs from upstream on one role. `interrogate reviewers` is Opus and Sonnet instead of Opus and Grok. Grok writes the code, so the reviewers that make its diff trustworthy are the Claude ones. In an eval on a diff with three planted issues, Opus and Sonnet reviews took one to two and a half minutes and Grok reviews took six to twelve, and the Grok reviews caught nothing the Claude ones missed. When Claude wrote most of a diff, the **Opening a PR** playbook adds a Grok reviewer so the panel still crosses families.
+`interrogate reviewers` is Opus and Sonnet instead of Opus and Grok. In an eval on a diff with three planted issues, Opus and Sonnet reviews took one to two and a half minutes and Grok reviews took six to twelve, and the Grok reviews caught nothing the Claude ones missed. A small change keeps that panel. For a larger change, the **Opening a PR** playbook adds a reviewer from the family that did not write most of the code, which is Grok when Claude wrote it.
 
 How a role reaches its model depends on where the parent runs.
 
@@ -93,7 +97,7 @@ New files:
 Edited upstream files:
 
 - `skills/tdd/SKILL.md` is rewritten: backend changes are test-first by default, and frontend code gets no tests. Upstream rarely changes this file.
-- `skills/poteto-mode/SKILL.md` adds four triggers (project conventions and reuse, TDD, git, and the small-change lane) and allows a short comment on genuinely complex code.
+- `skills/poteto-mode/SKILL.md` adds four triggers (project conventions and reuse, TDD, git, and the small-change lane), sends bulk code to the `swarm workers` model, and allows a short comment on genuinely complex code.
 - `playbooks/feature.md`, `bug-fix.md`, and `refactoring.md` fold those steps into their existing steps and let a small change skip `how` and `architect`. `opening-a-pr.md` points its description format at `git-conventions` and adds the cross-family review.
 - `agents/comment-sicko.md` and `skills/no-comments/SKILL.md` keep tool-read annotations and the short orientation comment.
 - `agents/poteto-agent.md`, `skills/poteto-help/SKILL.md`, `skills/interrogate/references/code-quality-review.md`, and the skill table in `README.md` get a few lines each.

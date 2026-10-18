@@ -144,9 +144,9 @@ if [ ! -f "$config/models.md" ]; then
 # Run /setup-pstack to change these.
 # budget: large (xhigh)
 # speed: fast
-feature, refactoring: grok-4.7-xhigh-fast
-bug-fix: grok-4.7-xhigh-fast
-perf-issue: grok-4.7-xhigh-fast
+feature, refactoring: claude-sonnet-5-5-xhigh
+bug-fix: claude-sonnet-5-5-xhigh
+perf-issue: claude-sonnet-5-5-xhigh
 hillclimb: grok-4.7-xhigh-fast
 judgment and prose: claude-opus-5-5-xhigh
 hardest tasks: claude-opus-5-5-xhigh
@@ -198,4 +198,4 @@ if [ ${#shadowed[@]} -gt 0 ]; then
 	say "pstack reads them by path, so it would follow your files instead. Rename or move them, then rerun." >&2
 	exit 1
 fi
-say "installed pstack from $repo. Start a task with /poteto-mode in a Claude chat. Grok writes the code either way."
+say "installed pstack from $repo. Start a task with /poteto-mode in a Claude chat."
