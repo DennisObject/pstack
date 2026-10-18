@@ -26,6 +26,8 @@ If none fits, use the rules below, and name each step you could not map in your 
 
 **Read the model config once per session.** It lives at `~/.config/pstack/models.md` and holds the role lines that Cursor keeps in `~/.cursor/rules/pstack-models.mdc`, in the same format, without frontmatter. A missing file or a missing line means the skill's default. Never copy role lines into `AGENTS.md` or `CLAUDE.md`.
 
+**Read its `# speed` line too.** `# speed: fast` keeps every `-fast` slug fast on every spawn, so skip the rule in poteto-mode's Subagents section that saves fast mode for urgent jobs. `# speed: standard`, or no speed line, keeps that rule.
+
 **Keep model slugs in Cursor form.** Skills and the config name models as `claude-opus-5-5-xhigh` or `grok-4.7-xhigh-fast`. Read a slug as family, version, effort, and an optional `-fast`. Your harness reference turns it into spawn parameters.
 
 **Spawn each role on its configured family, in this order:**
@@ -49,9 +51,10 @@ Never drop a seat without saying so. A review panel that should hold two model f
 
 ## Run setup-pstack outside Cursor
 
-Follow the **setup-pstack** skill with three changes.
+Follow the **setup-pstack** skill with four changes.
 
 - **Detect models** with `orchestrator_capabilities` inside T3, and write each as a Cursor-form slug per [references/t3-code.md](references/t3-code.md). Without T3, your own subagent tool gives your family, as in `opus`, `sonnet`, `haiku`, and `fable` in Claude Code. Count the other family as available when its CLI runs (`grok --version` or `claude --version`), and say that it serves read-only seats only.
+- **Ask for a speed** after the budget, with the options `fast — every -fast seat stays fast` and `standard — fast only for urgent jobs`. A fast Grok seat finished about twice as fast in an eval and costs about twice as much per token. Write the choice as `# speed: <choice>` under the `# budget` line.
 - **Write** `~/.config/pstack/models.md` with the same lines, without frontmatter.
 - **Validate** each slug against what you detected, by family and effort. A slug that only a headless CLI can run is valid for read-only roles such as reviewers, explorers, and judges, and invalid for code roles.
 

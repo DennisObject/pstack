@@ -143,6 +143,7 @@ if [ ! -f "$config/models.md" ]; then
 # `inherit-parent` or `auto` as a value: the role runs on the parent chat model. Alias entries in a panel list still count toward its fan-out.
 # Run /setup-pstack to change these.
 # budget: large (xhigh)
+# speed: fast
 feature, refactoring: grok-4.7-xhigh-fast
 bug-fix: grok-4.7-xhigh-fast
 perf-issue: grok-4.7-xhigh-fast

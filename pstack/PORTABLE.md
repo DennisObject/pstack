@@ -47,6 +47,8 @@ It merges `upstream/main`, rebuilds the generated tree with this fork's generato
 
 `~/.config/pstack/models.md` holds one line per role in Cursor's slug form, such as `grok-4.7-xhigh-fast` or `claude-opus-5-5-xhigh`. `/setup-pstack` rewrites it. The defaults follow upstream: Grok writes code, and Opus does design synthesis, review judgment, and prose.
 
+Its `# speed` line decides whether the `-fast` slugs stay fast. `fast`, the install default, keeps them fast on every spawn, so run times stay steady. A fast Grok seat finished about twice as fast in an eval and costs about twice as much per token. `standard` follows upstream and uses fast mode only for urgent jobs.
+
 How a role reaches its model depends on where the parent runs.
 
 | Parent | Claude roles | Grok roles |
