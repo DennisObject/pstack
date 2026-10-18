@@ -29,6 +29,13 @@ pstack skills use Cursor names. In Grok, read this file once per session after [
 
 Grok allows one level of subagents, so a session started by `spawn_subagent` has no `spawn_subagent` of its own. A Grok thread that T3 started can spawn. [The harness skill](../SKILL.md) says how to tell from your tools.
 
+## When Grok leads
+
+Grok writes code fast, but it defends its own code in review. In an eval, a Grok lead dismissed every finding a Claude reviewer raised on its diff, a real bug included. So a Grok lead hands the judgment on its work to the `judgment and prose` model and never fills these seats itself:
+
+- **The `interrogate` verdict and the PR text.** After the reviewers return, spawn one seat with the intent, the diff, every reviewer's report, the issue, and the paths of the **interrogate** skill's `references/lead-judgment.md` and the **git-conventions** skill. It returns the verdict (Steps 4 and 5), then a PR title and body that assume its Act On items are fixed. Fix every Act On item. Overrule one only with a failing test or a quoted requirement, and say so in your reply. Then rerun `check-message.sh` and change the body only where a fix changed what it says.
+- **The `architect` synthesis and the `how` explainer,** as those skills already assign them.
+
 Never replace the `interrogate` panel with a self-review. A reviewer from another model family is what makes a Grok diff trustworthy. If no spawn tool works, run the Claude CLI headless, as in [Headless Claude](#headless-claude). If that fails too, open your reply with "interrogate did not run" and the reason.
 
 ## Models
@@ -40,8 +47,6 @@ Never replace the `interrogate` panel with a self-review. A reviewer from anothe
 | A `gpt-*` or other slug | Run the role on the session model and say so. |
 | `auto` or `inherit-parent` | Omit `model`. |
 | The `pstack-models.mdc` rule | Grok does not load it. Read and write `~/.config/pstack/models.md` instead, which holds the same role lines without frontmatter. [The harness skill](../SKILL.md) says how `setup-pstack` writes it. Never put its role lines in `AGENTS.md`. |
-
-Opus is pstack's default for judgment: the design synthesis in `architect`, the lead verdict in `interrogate`, the explainer in `how`, and prose such as a PR body. When you run as the parent on Grok, spawn those roles on their configured Claude model through T3 instead of doing them yourself. Then review what comes back. You still own the result.
 
 ## Paths
 
