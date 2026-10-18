@@ -37,6 +37,8 @@ If none fits, use the rules below, and name each step you could not map in your 
 
 Never drop a seat without saying so. A review panel that should hold two model families and holds one says that in its output, because model diversity is what makes the review adversarial.
 
+**Decide whether you can spawn from your tools, not from your role.** T3 opens every delegated brief with "Act as the implementation sub-agent", which does not stop you. If your harness's spawn tool or `delegate_task` is in your tool list, run every panel and delegate the skill asks for. With neither tool, leave the fan-out to your parent, or do the slices yourself one after another and say so.
+
 **Ask questions and track todos with your harness's tools.** Your reference names them. With no todo tool, keep the list in your reply and update it at each phase.
 
 **Read the project's rules before code.** Cursor loads `.cursor/rules` by itself. Claude Code and Grok load only some instruction files, so run the **project-conventions** skill before you write code. It reads all of them.
