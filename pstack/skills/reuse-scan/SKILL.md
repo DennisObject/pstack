@@ -26,7 +26,7 @@ Then check two more places.
 - **The shared homes** this repository uses, such as `Helpers/`, `Services/`, `shared/`, `lib/`, `composables/`, or `hooks/`. Learn them from the tree, not from habit.
 - **The framework and the installed dependencies.** Many needs are one call, such as date math, collection operations, validation, retries, or HTTP. Never hand-roll what an installed dependency does, and never add a dependency for what the stack already has.
 
-If the project's instruction files name a semantic code search tool, use it next to `rg`. In a large codebase, spawn one read-only explorer per angle in parallel, on the `how explorer` model. Keep the scan to minutes.
+If the project's instruction files name a semantic code search tool, use it next to `rg`. In a large codebase, spawn one read-only explorer per angle in parallel, on the `how explorer` model. Explorers return candidates with `file:line`, and you make every decision in step 3. Keep the scan to minutes.
 
 ## 3. Decide each need
 
