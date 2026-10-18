@@ -25,6 +25,7 @@ Prefer your harness's own subagent tool when it can set the slug's model and eff
 - Set `role` to match the seat: `implementation` for code delegates, `review` for `interrogate` reviewers and judges, `research` for `how` and `why` investigators, `design` for `architect` and `arena` runners, `test` for test authors.
 - Give each spawn a `clientRequestId` that names the role and the round, such as `interrogate-r1-reviewer-b`. Reuse it only to retry that same spawn.
 - Use `mode: "async"`, the default. A finished child wakes your thread with its result, so end your turn instead of polling. Call `task_status` only when you need a result before your turn can continue.
+- When your turn needs the result now, use `mode: "wait"` with `timeoutMs` of `240000` or less. The MCP bridge drops a call after about five minutes and reports `fetch failed`, but the child keeps running. After a timeout or a `fetch failed`, call `delegate_task` again with the same brief and `clientRequestId`. It picks up the running child instead of starting a new one.
 - A new round is a new `delegate_task` with the consolidated brief: the original task, every later directive, and the prior round's findings. This is pstack's fresh-subagent rule. Never continue a child by messaging its thread.
 - Never use `t3_thread_launch` or `create_threads` for a pstack subagent. Those open top-level threads, which only the user asks for.
 
