@@ -46,6 +46,7 @@ ok "starts every role at high effort" 'grep -qx "# budget: medium (high)" "$HOME
 ok "reviews with two Claude seats by default" 'grep -qx "interrogate reviewers: claude-opus-5-5-high, claude-sonnet-5-5-high" "$HOME/.config/pstack/models.md"'
 ok "writes everyday code with Sonnet by default" 'grep -qx "feature, refactoring: claude-sonnet-5-5-high" "$HOME/.config/pstack/models.md" && grep -qx "bug-fix: claude-sonnet-5-5-high" "$HOME/.config/pstack/models.md"'
 ok "uses only Claude models by default" '! grep -q "grok-" "$HOME/.config/pstack/models.md" && grep -qx "swarm workers: claude-sonnet-5-5-high" "$HOME/.config/pstack/models.md"'
+ok "explores code with Haiku and history with Sonnet by default" 'grep -qx "how explorer: claude-haiku-5-5-high" "$HOME/.config/pstack/models.md" && grep -qx "why investigators: claude-sonnet-5-5-high" "$HOME/.config/pstack/models.md"'
 ok "adds the rules block to CLAUDE.md and keeps the user text" 'grep -q "Keep this line." "$HOME/.claude/CLAUDE.md" && grep -q "pstack-portable:begin" "$HOME/.claude/CLAUDE.md"'
 ok "the rules block names the skill files by path" 'grep -q "$HOME/.claude/skills/git-conventions/SKILL.md" "$HOME/.claude/CLAUDE.md"'
 ok "the rules block lets project rules win" 'grep -qi "project" "$HOME/.claude/CLAUDE.md"'
