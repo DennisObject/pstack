@@ -49,6 +49,8 @@ It merges `upstream/main`, rebuilds the generated tree with this fork's generato
 
 Its `# speed` line decides whether the `-fast` slugs stay fast. `fast`, the install default, keeps them fast on every spawn, so run times stay steady. A fast Grok seat finished about twice as fast in an eval and costs about twice as much per token. `standard` follows upstream and uses fast mode only for urgent jobs.
 
+The install also departs from upstream on one role. `interrogate reviewers` is Opus and Sonnet instead of Opus and Grok. Grok writes the code, so the reviewers that make its diff trustworthy are the Claude ones. In an eval on a diff with three planted issues, Opus and Sonnet reviews took one to two and a half minutes and Grok reviews took six to twelve, and the Grok reviews caught nothing the Claude ones missed. When Claude wrote most of a diff, the **Opening a PR** playbook adds a Grok reviewer so the panel still crosses families.
+
 How a role reaches its model depends on where the parent runs.
 
 | Parent | Claude roles | Grok roles |
