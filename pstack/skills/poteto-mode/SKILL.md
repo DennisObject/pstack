@@ -22,7 +22,7 @@ Remaining triggers:
 - Any code → name the data shape first, and choose its organizing structure per **principle-model-the-domain**.
 - Backend behavior changes → the **tdd** skill. Tests come from the requirement, fail first, and stay frozen while the code turns them green. Frontend code gets no tests, written or run, unless the user asks.
 - Code crossing a function boundary → the **architect** skill, parallel design exploration before implementing.
-- A **small change** follows a pattern the repository already has, touches about five files or fewer with tests included, and has a shape nobody contests. It skips `how` and `architect`. Read the affected files yourself, name the shape in the todo and in the code delegate's brief, and write `skip: small change, <the shape and the pattern it follows>`. Every other step still runs, tests first and `interrogate` included.
+- A **small change** follows a pattern the repository already has, touches about five files or fewer with tests included, and has a shape nobody contests. It skips `how` and `architect`. Read the affected files yourself, name the shape in the todo and in the code delegate's brief, and write `skip: small change, <the shape and the pattern it follows>`. Every other step still runs, tests first included. Its `interrogate` runs one reviewer, on Sonnet at `high`.
 - Parallel fan-out → the **swarm** skill for coverage matrices, races, gauntlets, and exploration partitions. Use **arena** for design or code bakeoffs with base selection and grafting.
 - Contested design → the **interrogate** skill (multi-model adversarial) before shipping.
 - Nontrivial multi-step → write the throughput checkpoint (Feature step 3).

@@ -139,24 +139,24 @@ if [ ! -f "$config/models.md" ]; then
 # pstack model configuration. One line per role. Delete a line to fall back to the skill default.
 # `inherit-parent` or `auto` as a value: the role runs on the parent chat model. Alias entries in a panel list still count toward its fan-out.
 # Run /setup-pstack to change these.
-# budget: large (xhigh)
-feature, refactoring: claude-sonnet-5-5-xhigh
-bug-fix: claude-sonnet-5-5-xhigh
-perf-issue: claude-sonnet-5-5-xhigh
-hillclimb: claude-sonnet-5-5-xhigh
-judgment and prose: claude-opus-5-5-xhigh
-hardest tasks: claude-opus-5-5-xhigh
-how explorer: claude-sonnet-5-5-xhigh
-how explainer: claude-opus-5-5-xhigh
-why investigators: claude-sonnet-5-5-xhigh
-why synthesizer: claude-opus-5-5-xhigh
-reflect tooling: claude-sonnet-5-5-xhigh
-reflect judgment, divergent, synthesizer: claude-opus-5-5-xhigh
-arena runners: claude-opus-5-5-xhigh, claude-sonnet-5-5-xhigh
-arena cross-judge pool: claude-opus-5-5-xhigh, claude-sonnet-5-5-xhigh
-swarm workers: claude-sonnet-5-5-xhigh
-architect runners: claude-opus-5-5-xhigh, claude-sonnet-5-5-xhigh
-interrogate reviewers: claude-opus-5-5-xhigh, claude-sonnet-5-5-xhigh
+# budget: medium (high)
+feature, refactoring: claude-sonnet-5-5-high
+bug-fix: claude-sonnet-5-5-high
+perf-issue: claude-sonnet-5-5-high
+hillclimb: claude-sonnet-5-5-high
+judgment and prose: claude-opus-5-5-high
+hardest tasks: claude-opus-5-5-high
+how explorer: claude-sonnet-5-5-high
+how explainer: claude-opus-5-5-high
+why investigators: claude-sonnet-5-5-high
+why synthesizer: claude-opus-5-5-high
+reflect tooling: claude-sonnet-5-5-high
+reflect judgment, divergent, synthesizer: claude-opus-5-5-high
+arena runners: claude-opus-5-5-high, claude-sonnet-5-5-high
+arena cross-judge pool: claude-opus-5-5-high, claude-sonnet-5-5-high
+swarm workers: claude-sonnet-5-5-high
+architect runners: claude-opus-5-5-high, claude-sonnet-5-5-high
+interrogate reviewers: claude-opus-5-5-high, claude-sonnet-5-5-high
 EOF
 fi
 
