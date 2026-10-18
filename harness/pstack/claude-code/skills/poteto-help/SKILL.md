@@ -44,7 +44,7 @@ Installing changes nothing until the user invokes a skill. Only `/setup-pstack` 
 
 If cost is the worry, say where the tokens go and how to spend fewer. pstack spends extra tokens on subagents and review panels. Rerun `/setup-pstack` and pick a smaller budget or cheaper models. A role set to `auto` or `inherit-parent` runs on the chat's model, which saves tokens when the chat runs on Auto or a cheaper model. A shorter panel list runs fewer subagents, one for each entry. Save `/poteto-mode` for work that needs rigor.
 
-pstack is built for Cursor. In Claude Code, Grok, and T3 Code, the [`pstack-harness`](../pstack-harness/SKILL.md) skill maps Cursor's subagents, model slugs, and rules to that harness, and `scripts/install-portable-pstack.sh` at the repository root installs pstack for both Claude Code and Grok. Custom Modes are a Cursor feature, so elsewhere start each task with `/poteto-mode`. Start the chat on a Claude model, Sonnet for everyday work and Opus for hard design, because the chat's model leads. Sonnet writes most code. Grok takes bulk edits across many files, parallel attempts, and a second design in `architect`. A Grok-led chat works too and takes longer.
+pstack is built for Cursor. In Claude Code, the [`pstack-harness`](../pstack-harness/SKILL.md) skill maps Cursor's subagents, model slugs, and rules, and `scripts/install-portable-pstack.sh` at the repository root installs pstack. Custom Modes are a Cursor feature, so elsewhere start each task with `/poteto-mode`. Start the chat on Sonnet for everyday work and on Opus for hard design, because the chat's model leads.
 
 ## Start a task with `/poteto-mode`
 

@@ -2,7 +2,7 @@
 
 An `AGENTS.md` holds the facts about one repository that an agent cannot infer quickly: commands, architecture rules, and the conventions the code follows. pstack holds the workflow, such as test-first, reuse, comments, and git. Keep workflow rules out of `AGENTS.md` unless this project needs a different one.
 
-Keep the file under about 8,000 characters, because Grok cuts each instruction file at 10,000. Point to longer references instead of pasting them. Put a rule that a tool can enforce in the tool's config, and name the command here.
+Keep the file short, because every agent reads all of it on every task. Point to longer references instead of pasting them. Put a rule that a tool can enforce in the tool's config, and name the command here.
 
 For Claude Code, make `CLAUDE.md` a single line, `@AGENTS.md`, or delete it. Claude Code skips `AGENTS.md` in a directory that has its own `CLAUDE.md`.
 
