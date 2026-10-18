@@ -44,6 +44,7 @@ ok "links agents for Claude Code" '[ -L "$HOME/.claude/agents/poteto-agent.md" ]
 ok "links agents for Grok" '[ -L "$HOME/.grok/agents/poteto-agent.md" ]'
 ok "writes the default model config" 'grep -q "^judgment and prose: claude-opus-5-5-xhigh" "$HOME/.config/pstack/models.md"'
 ok "writes the speed setting into the default model config" 'grep -qx "# speed: fast" "$HOME/.config/pstack/models.md"'
+ok "reviews with two Claude seats by default" 'grep -qx "interrogate reviewers: claude-opus-5-5-xhigh, claude-sonnet-5-5-xhigh" "$HOME/.config/pstack/models.md"'
 ok "adds the rules block to CLAUDE.md and keeps the user text" 'grep -q "Keep this line." "$HOME/.claude/CLAUDE.md" && grep -q "pstack-portable:begin" "$HOME/.claude/CLAUDE.md"'
 ok "adds the rules block for Grok" 'grep -q "AI attribution" "$HOME/.grok/AGENTS.md"'
 ok "the rules block names the skill files by path" 'grep -q "$HOME/.claude/skills/git-conventions/SKILL.md" "$HOME/.claude/CLAUDE.md"'
