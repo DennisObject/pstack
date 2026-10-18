@@ -47,7 +47,9 @@ It merges `upstream/main`, rebuilds the generated tree with this fork's generato
 
 ## Models
 
-`~/.config/pstack/models.md` holds one line per role in Cursor's slug form, such as `claude-opus-5-5-xhigh`. `/setup-pstack` rewrites it. Every role runs on Claude: Opus for judgment, design, prose, and the hardest changes, and Sonnet for code, exploration, and parallel workers. Panels such as `architect` and `interrogate` pair Opus with Sonnet, except that a small change gets one Sonnet reviewer.
+`~/.config/pstack/models.md` holds one line per role in Cursor's slug form, such as `claude-opus-5-5-xhigh`. `/setup-pstack` rewrites it. Every role runs on Claude: Opus for judgment, design, prose, and the hardest changes, Sonnet for code, git history, and parallel workers, and Haiku for the `how` explorers. Panels such as `architect` and `interrogate` pair Opus with Sonnet, except that a small change gets one Sonnet reviewer.
+
+Haiku got the explorer seat from a blind eval on a 700-file PHP API and its Vue frontend. On "how does X work" questions, Haiku explorers covered as many verified facts as Sonnet explorers at a third to a tenth of the cost, but took about twice as long. Haiku fell behind on git history and on reuse decisions, so `why investigators` stay on Sonnet and the lead makes every reuse decision.
 
 Every role starts at `high` effort, the `medium` budget in `/setup-pstack`. Upstream starts at `xhigh`, which is built for unlimited tokens. In our evals an Opus reviewer at `xhigh` used twice the output tokens of one at `high` and found the same issues. Most of a run's usage is thinking and output tokens, plus about 25k tokens to start each subagent. Re-reading the context is cheap, because Claude caches it. So the savings come from lower effort and fewer seats, not shorter skills.
 

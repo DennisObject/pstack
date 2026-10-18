@@ -146,7 +146,7 @@ perf-issue: claude-sonnet-5-5-high
 hillclimb: claude-sonnet-5-5-high
 judgment and prose: claude-opus-5-5-high
 hardest tasks: claude-opus-5-5-high
-how explorer: claude-sonnet-5-5-high
+how explorer: claude-haiku-5-5-high
 how explainer: claude-opus-5-5-high
 why investigators: claude-sonnet-5-5-high
 why synthesizer: claude-opus-5-5-high

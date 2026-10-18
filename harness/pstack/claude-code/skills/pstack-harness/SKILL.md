@@ -38,7 +38,7 @@ pstack runs in Claude Code. Read [references/claude-code.md](references/claude-c
 
 Follow the **setup-pstack** skill with three changes.
 
-- **Detect models** from the `Agent` tool: `opus`, `sonnet`, `haiku`, and `fable`, each at the efforts it accepts. Offer only Claude slugs, and use `claude-sonnet-5-5` where the skill defaults name a Grok slug.
+- **Detect models** from the `Agent` tool: `opus`, `sonnet`, `haiku`, and `fable`, each at the efforts it accepts. Offer only Claude slugs. Where the skill defaults name a Grok slug, use `claude-haiku-5-5` for `how explorer` and `claude-sonnet-5-5` for every other role.
 - **Write** `~/.config/pstack/models.md` with the same lines, without frontmatter.
 - **Validate** each slug against what you detected, by model and effort.
 
