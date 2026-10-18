@@ -81,8 +81,8 @@ New files:
 Edited upstream files:
 
 - `skills/tdd/SKILL.md` is rewritten: backend changes are test-first by default, and frontend code gets no tests. Upstream rarely changes this file.
-- `skills/poteto-mode/SKILL.md` adds three triggers (project conventions and reuse, TDD, git) and allows a short comment on genuinely complex code.
-- `playbooks/feature.md`, `bug-fix.md`, and `refactoring.md` fold those steps into their existing steps. `opening-a-pr.md` points its description format at `git-conventions` and adds the cross-family review.
+- `skills/poteto-mode/SKILL.md` adds four triggers (project conventions and reuse, TDD, git, and the small-change lane) and allows a short comment on genuinely complex code.
+- `playbooks/feature.md`, `bug-fix.md`, and `refactoring.md` fold those steps into their existing steps and let a small change skip `how` and `architect`. `opening-a-pr.md` points its description format at `git-conventions` and adds the cross-family review.
 - `agents/comment-sicko.md` and `skills/no-comments/SKILL.md` keep tool-read annotations and the short orientation comment.
 - `agents/poteto-agent.md`, `skills/poteto-help/SKILL.md`, `skills/interrogate/references/code-quality-review.md`, and the skill table in `README.md` get a few lines each.
 - `../scripts/generate-pstack-harness-trees.mjs` points every generated skill at the harness skill, ships the `cursor-team-kit` companions, and checks each adapter on its own.

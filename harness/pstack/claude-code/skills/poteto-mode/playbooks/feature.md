@@ -2,8 +2,8 @@
 
 **You own the design. Plan, review, verify.** Delegate implementation. Stay in the lead.
 
-1. `how` over the affected subsystem, then the **project-conventions** and **reuse-scan** skills. Their briefs go to every delegate.
-2. `architect` for parallel design exploration.
+1. `how` over the affected subsystem, or for a small change (Non-negotiables) read the affected files yourself. Then the **project-conventions** and **reuse-scan** skills. Their briefs go to every delegate.
+2. `architect` for parallel design exploration. A small change skips it.
 3. Write the throughput checkpoint as four todo items. A dimension that genuinely does not apply (single file, no fan-out) keeps its item with `n/a: <reason>` rather than being dropped:
    - **Blocking first steps.** Gates run before fan-out.
    - **Independent workstreams.** Disjoint files, services, or layers parallelize. Shared writes serialize.
