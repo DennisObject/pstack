@@ -27,12 +27,20 @@ Start each task with `/poteto-mode`, the goal, and how to tell it is done.
 /poteto-mode group windows show stale HP when someone else damages a selected target. fix it. done means a regression test that failed before the fix passes, and the PR body is ready.
 ```
 
+**Start the thread on Claude and let Grok write the code.** The thread's model is the lead. It owns the design, the tests, and the review verdict, and it hands the code to Grok through the `feature`, `bug-fix`, and `refactoring` lines. The same discount-code task took these times with every check passing:
+
+| Lead | Time | Use it for |
+| --- | --- | --- |
+| Sonnet 5.5 | 5.5 min | Everyday work. It wrote the simplest code. |
+| Opus 5.5 | not measured | Hard design work, where judgment matters more than speed. |
+| Grok 4.7 Fast or Grok 4.7 | 14 to 16 min | When you want Grok throughout. It hands the review verdict and the PR text to Claude, and its code came out slightly more elaborate. |
+
 The mode picks a playbook. For a feature or a bug fix it now runs, in order:
 
 1. **project-conventions.** Reads every `AGENTS.md` and `CLAUDE.md` on the path, the lint and CI config, and nearby code. Returns the rules and the exact commands.
 2. **reuse-scan.** Searches the codebase four ways for code that already does the job. Returns a reuse brief that every code delegate must follow.
 3. **tdd.** For backend behavior, writes the tests from the requirement and commits them red. The implementer turns them green without touching them, and `red-green.sh` proves it from git history. Frontend code gets no tests.
-4. **interrogate.** Before every PR, reviewers from at least two model families try to break the diff.
+4. **interrogate.** Before every PR, reviewers try to break the diff, at least one of them from a model family that did not write it.
 5. **git-conventions.** Conventional Commits, a PR body with only Why, Testing, and Deployment, and `check-message.sh` on every message.
 
 ## Update from upstream

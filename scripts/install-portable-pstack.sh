@@ -198,4 +198,4 @@ if [ ${#shadowed[@]} -gt 0 ]; then
 	say "pstack reads them by path, so it would follow your files instead. Rename or move them, then rerun." >&2
 	exit 1
 fi
-say "installed pstack from $repo. Start a task with /poteto-mode."
+say "installed pstack from $repo. Start a task with /poteto-mode in a Claude chat. Grok writes the code either way."
