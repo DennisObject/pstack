@@ -58,10 +58,10 @@ pstack skills use Cursor names. In Claude Code, read this file once per session 
 For a read-only seat, such as an `interrogate` reviewer or a `how` explorer, run Grok from `Bash` and read its stdout as the subagent's report:
 
 ```bash
-grok --prompt-file /tmp/<brief>.md -m grok-<version> --effort <effort> --permission-mode plan --output-format plain
+grok --prompt-file /tmp/<brief>.md -m grok-<version> --effort <effort> --permission-mode bypassPermissions --sandbox read-only --output-format plain
 ```
 
-Take the version and the effort from the slug. Add `-build-fast` to the model for a `-fast` slug when `grok models` lists it. Write the brief to a file and pass it with `--prompt-file`, so no shell quoting or argument limit touches it. `--permission-mode plan` keeps the run read-only. Check `git status` afterward anyway. Never use this path for a seat that edits files.
+Take the version and the effort from the slug. Add `-build-fast` to the model for a `-fast` slug when `grok models` lists it. Write the brief to a file and pass it with `--prompt-file`, so no shell quoting or argument limit touches it. Never use `--permission-mode plan` here: a headless Grok run ends without a report at the first command that needs approval. `--sandbox read-only` lets it run commands while the kernel blocks writes outside `/tmp` and `~/.grok`, so keep the repository outside `/tmp`. Start parallel Grok seats a few seconds apart, because sandboxed runs that start at the same moment can refuse to launch. Check `git status` afterward anyway. A report that only says what it is about to do ended early, so rerun it once, then say the seat is missing. Never use this path for a seat that edits files.
 
 ## Cursor-only features
 
