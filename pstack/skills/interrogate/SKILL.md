@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Interrogate
 
-Spawn one reviewer per configured model to adversarially review code changes. The adversarial signal comes from model diversity, not assigned personas. The deliverable is a synthesized verdict. Do NOT auto-apply changes.
+Spawn the reviewers that fit the change to adversarially review it. When more than one runs, the adversarial signal comes from model diversity, not assigned personas. The deliverable is a synthesized verdict. Do NOT auto-apply changes.
 
 ## Step 1, Scope
 
@@ -24,7 +24,15 @@ Before spawning reviewers, state the intent in one clear paragraph from the user
 
 ## Step 3, Spawn Reviewers
 
-Launch all reviewers in a single message with the Task tool, one per entry on the `interrogate reviewers` line in `~/.cursor/rules/pstack-models.mdc`, labeled Reviewer A, B, and so on to match the entry count. If the rule or that line is missing, use the table defaults.
+**Choose the panel by size and risk first.** The entries on the `interrogate reviewers` line are a pool, not a fixed fan-out. Two reviewers read the same diff, so a second one costs about as much as the first and only pays off when the change is contestable. Pick the cheapest panel that fits and name it with one line of reasoning:
+
+- **Small change** (the **poteto-mode** definition) or an ordinary change with no risky area: one reviewer, the Sonnet entry.
+- **Subtle or high-risk change**, such as concurrency, auth or permissions, money, data migrations, public API shape, a tricky algorithm, or a diff well past 15 files: one reviewer, the Opus entry.
+- **Contested design, or the user asks for multi-model or adversarial review**: every entry in the pool.
+
+When the pool has one entry, spawn it. A reviewer who finds nothing is a valid result, so never add a second reviewer to confirm a clean review.
+
+Launch the chosen reviewers in a single message with the Task tool, one per chosen entry from the `interrogate reviewers` line in `~/.cursor/rules/pstack-models.mdc`, labeled Reviewer A, B, and so on to match the entry count. If the rule or that line is missing, use the table defaults.
 
 | Subagent | Default model |
 |----------|---------------|
