@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Git conventions
 
-Outside Cursor, read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code.
+Outside Cursor, read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code, Codex, and Grok.
 
 A repository's own rules beat this skill. Read them first with the **project-conventions** skill: a PR template, a commitlint config, a branch pattern, or an `AGENTS.md` line. This skill fills every gap they leave.
 

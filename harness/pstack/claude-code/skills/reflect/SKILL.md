@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Reflect
 
-Outside Cursor, read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code.
+Outside Cursor, read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code, Codex, and Grok.
 
 Mine the current conversation for durable learnings, then route them into skill edits.
 

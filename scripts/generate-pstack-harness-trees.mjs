@@ -10,9 +10,9 @@ const SKILLS = join(PSTACK, "skills");
 // Outside pstack/ so Cursor, which copies the whole plugin folder, does not install this tree too.
 const OUT = join(ROOT, "harness", "pstack");
 const TREE = "claude-code";
-// The Claude Code adapter must map every Cursor name the skills use.
+// Every adapter must map every Cursor name the skills use.
 const HARNESS = "pstack-harness";
-const ADAPTERS = [`skills/${HARNESS}/references/claude-code.md`];
+const ADAPTERS = ["claude-code", "codex", "grok"].map((name) => `skills/${HARNESS}/references/${name}.md`);
 // pstack calls these cursor-team-kit skills by name, so the tree ships them beside the pstack skills.
 const COMPANIONS = ["deslop", "control-ui", "control-cli"];
 const TEAM_KIT = join(ROOT, "cursor-team-kit", "skills");
@@ -125,7 +125,7 @@ function render() {
   const files = new Map(copies.map((path) => [relative(PSTACK, path), file(path)]));
   const line =
     `Outside Cursor, read [the pstack harness skill](../${HARNESS}/SKILL.md) once per session before you follow this skill. ` +
-    "It maps the Cursor names in pstack skills to Claude Code.";
+    "It maps the Cursor names in pstack skills to Claude Code, Codex, and Grok.";
   for (const [skill, { wrap }] of classes) {
     const path = `skills/${skill}/SKILL.md`;
     const text = files.get(path).bytes.toString("utf8");
