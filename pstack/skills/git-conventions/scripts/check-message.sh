@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Check a commit message, a PR title, or a PR body against the git-conventions
 # skill: a Conventional Commits header, the Why / Testing / Deployment PR body,
-# and no AI attribution anywhere.
+# no AI attribution anywhere, and no em or en dash.
 #
 # Usage: check-message.sh commit <file> [--allow-term <word>]...
 #        check-message.sh title <text> [--allow-term <word>]...
@@ -196,12 +196,24 @@ EOF
 	fi
 }
 
+check_plain() {
+	local all="$1" line
+	while IFS= read -r line; do
+		case "$line" in
+		*'—'* | *'–'*) error "use a plain hyphen '-', never an em dash or en dash: $line" ;;
+		esac
+	done <<EOF
+$all
+EOF
+}
+
 case "$mode" in
 attribution) ;;
 commit) check_commit ;;
 title) check_title ;;
 body) check_body ;;
 esac
+[ "$mode" = attribution ] || check_plain "$text"
 check_attribution "$text"
 
 [ "$errors" -eq 0 ] || exit 1

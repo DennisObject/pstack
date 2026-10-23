@@ -78,6 +78,8 @@ Resolve a conflict by intent, never by picking a side. For each conflicted file,
 - `## Testing` appears only when a person should check something by hand: UI, gameplay, a visual change, or an integration that no automated test covers. Every item is a checkbox with one action and its expected result. Skip what CI already proves.
 - `## Deployment` appears only when someone must act outside the code deploy: run SQL, change a server setting or an environment variable, add or change a cron job, restart a service, clear a cache, or flip a flag. Every item is a checkbox that says when (before or after deploy), where, and exactly what. Put SQL and commands in code blocks, ready to paste. Make SQL safe to run twice where the engine allows it. Never paste a secret. Name the variable and where its value lives.
 
+Write every part in plain language (ISO 24495-1:2023): short sentences, common words, active voice. Say what the change does, as in "Fixes ..." or "Adds ...". The checker rejects em and en dashes.
+
 Leave out everything else: file lists, "what changed" recaps of the diff, test counts, your verification log, and process notes. Your verification evidence goes in your reply to the user, not the PR. Name code only where a reviewer needs the name. Describe what a user or a teammate notices instead.
 
 ### Reference bodies
