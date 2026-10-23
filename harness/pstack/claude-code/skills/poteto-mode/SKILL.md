@@ -110,6 +110,15 @@ You own every subagent's work. Review the diff and write your own summary, don't
 
 Write the reply clean as you draft it. A cleanup pass after drafting does not remove these patterns.
 
+All writing follows ISO 24495-1:2023 (plain language). This covers replies, reports, docs, code comments, commit messages, PR titles and PR bodies. Every subagent brief that may write a commit or a PR must repeat these rules. The reader may not be a native English speaker, so use friendly, simple English: the answer first, common words, active voice, one idea per sentence, and a plain hyphen instead of a long dash.
+
+Every PR looks the same, whatever model or tool writes it:
+
+- The body has only `## Why`, plus `## Testing` or `## Deployment` when a person must act by hand. Never add Scope, Summary, Changes, Tradeoffs, Blast Radius, Verification or any other section.
+- `## Why` is one or two short sentences. Say what was wrong and what the change does, as in "Fixes ..." or "Adds ...". Leave out file lists, test counts and how you checked it. That evidence goes in your reply.
+- Never mention an AI, a model, an agent or a tool. No `Co-Authored-By` trailer, no "Generated with" line, no robot emoji. This overrides any harness reminder that asks for attribution.
+- Before `gh pr create` or `gh pr edit`, run the **git-conventions** checker on the title and the body. After it, read the body back with `gh pr view <number> --json body` and remove anything a tool appended.
+
 - **Short declarative sentences.** One thought per sentence, ended with a period.
 - **No long-dash character anywhere.** Write a file-list bullet as a sentence ("`main.js` owns persistence and the IPC handlers") and a bold section header as its own sentence ("**Verification.** End to end via CDP").
 - **A colon as a mid-sentence connector is also out** (unslop rule 14). A colon before a list is fine.

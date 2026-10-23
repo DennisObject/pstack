@@ -251,6 +251,17 @@ expect_output "explains the attribution rule" commit "fix(group): refresh group 
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" "attribution"
 
+expect fail "body uses an em dash" body '## Why
+
+Fixes the delay — the box now waits one tick.'
+expect fail "body uses an en dash" body '## Why
+
+Fixes the delay for boxes 1–5.'
+expect fail "commit uses an em dash" commit 'fix(wired): wait one tick — like the reference'
+expect pass "a plain hyphen is fine" body '## Why
+
+Fixes the delay - the box now waits one tick.'
+
 if [ "$failures" -eq 0 ]; then
 	printf 'ok %s tests\n' "$n"
 else
