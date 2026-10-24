@@ -24,7 +24,9 @@ pstack runs in Claude Code, Codex, and Grok. Read the reference for the harness 
 
 **Read the model config once per session.** It lives at `~/.config/pstack/models.md` and holds the role lines that Cursor keeps in `~/.cursor/rules/pstack-models.mdc`, in the same format, without frontmatter. A missing file or a missing line means the skill's default. Never copy role lines into `AGENTS.md` or `CLAUDE.md`.
 
-**Keep model slugs in Cursor form.** Skills and the config name models as `claude-opus-5-5-xhigh`. Read a slug as family, version, effort, and an optional `-fast`. Your harness reference turns it into spawn parameters. Upstream skills name Grok slugs as defaults for code and exploration seats. Your reference says how to run those on Claude.
+**Keep model slugs in Cursor form.** Skills and the config name models as `claude-opus-5-5-high`. Read a slug as family, version, effort, and an optional `-fast`. Your harness reference turns it into spawn parameters. Upstream skills name Grok slugs as defaults for code and exploration seats. Your reference says how to run those on Claude.
+
+**Cap effort before you spawn.** Claude and GPT never go above `high`. On those families, `xhigh` and `max` mean `high`. Grok may use `xhigh`. This wins over a skill default, a role line, and a budget.
 
 **Spawn every seat with your harness's subagent tool.** That is `Agent` in Claude Code, `spawn_agent` in Codex, and `task` in Grok. Never drop a seat without saying so.
 
@@ -42,9 +44,9 @@ pstack runs in Claude Code, Codex, and Grok. Read the reference for the harness 
 
 Follow the **setup-pstack** skill with three changes.
 
-- **Detect models** from your subagent tool. In Claude Code that is the `Agent` tool: `opus`, `sonnet`, `haiku`, and `fable`, each at the efforts it accepts. Offer only Claude slugs there. Codex and Grok cannot run Claude models, so write no model lines and say that every seat runs on the session model. Where the skill defaults name a Grok slug, use `claude-haiku-5-5` for `how explorer` and `claude-sonnet-5-5` for every other role.
+- **Detect models** from your subagent tool. In Claude Code that is the `Agent` tool: `opus`, `sonnet`, `haiku`, and `fable`, each at the efforts it accepts. Offer only Claude slugs there, and never above `high`. Codex and Grok cannot run Claude models, so write no model lines and say that every seat runs on the session model. Where the skill defaults name a Grok slug, use `claude-haiku-5-5-high` for `how explorer` and `claude-sonnet-5-5-high` for every other role. Do not copy a Grok `xhigh` onto Claude. A GPT seat stays at `high` or below. Grok may use `xhigh`.
 - **Write** `~/.config/pstack/models.md` with the same lines, without frontmatter.
-- **Validate** each slug against what you detected, by model and effort.
+- **Validate** each slug against what you detected, by model and effort. A Claude or GPT slug above `high` fails. Lower it to `high`. A Grok slug may be `xhigh`.
 
 ## Cursor-only features
 

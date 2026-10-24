@@ -31,8 +31,9 @@ pstack skills use Cursor names. In Grok, read this file once per session after [
 
 | Cursor | Grok |
 | --- | --- |
-| `claude-<family>-<version>-<effort>[-fast]`, such as `claude-opus-5-5-xhigh` | Grok cannot run Claude models. A subagent inherits the session model, and only a `[subagents.models]` pin in `~/.grok/config.toml` changes that. Run the seat on the session model and say so. |
-| A `grok-*`, `gpt-*`, or other non-Claude slug | Same: the session model, unless `[subagents.models]` pins the agent. |
+| `claude-<family>-<version>-<effort>[-fast]`, such as `claude-opus-5-5-xhigh` | Grok cannot run Claude models. A subagent inherits the session model, and only a `[subagents.models]` pin in `~/.grok/config.toml` changes that. Run the seat on the session model and say so. If the pin is Claude or GPT, its effort stays at `high` or below. |
+| A `grok-*` slug | Use it. `xhigh` is allowed. Do not lower Grok to `high` because Claude and GPT are capped. |
+| A `gpt-*` or other non-Claude slug | The session model, unless `[subagents.models]` pins the agent. A GPT seat stays at `high` or below. |
 | `auto` or `inherit-parent` | Omit the model. |
 | The `pstack-models.mdc` rule | Grok does not load it. Read and write `~/.config/pstack/models.md` instead, which holds the same role lines without frontmatter. Never put its role lines in `AGENTS.md`. |
 

@@ -26,13 +26,13 @@ The default role-to-model mapping is the rule shape shown in step 5 below. If `~
 - `medium — high reasoning`
 - `small — medium reasoning`
 
-**(b) Apply it.** Build the working table from the skill defaults, and on a re-run keep any role you changed by family, list, or alias (`inherit-parent`, `auto`). `unlimited`, `large`, `medium`, and `small` set the effort token of every real slug, panel entries included, to `max`, `xhigh`, `high`, or `medium`. The effort token is the last token, or the one before a trailing `fast`, on the ladder `max` > `xhigh` > `high` > `medium` > `low`. If the result is not a detected slug, use the same family's detected slug with the highest effort at or below the target, else mark the role as needing a choice. `inherit-parent` and `auto` do not change. So `unlimited` turns `claude-opus-5-5-xhigh` into `claude-opus-5-5-max`. Grok slugs top out at `xhigh`, so under `unlimited` the fallback puts Grok at `xhigh` and keeps `grok-4.7-xhigh-fast` as it is. `large` keeps both defaults. `small` turns them into `claude-opus-5-5-medium` and `grok-4.7-medium-fast`.
+**(b) Apply it.** Build the working table from the skill defaults, and on a re-run keep any role you changed by family, list, or alias (`inherit-parent`, `auto`). `unlimited`, `large`, `medium`, and `small` set the effort token of every real slug, panel entries included, to `max`, `xhigh`, `high`, or `medium`. The effort token is the last token, or the one before a trailing `fast`, on the ladder `max` > `xhigh` > `high` > `medium` > `low`. Then cap the family. Claude and GPT never go above `high`, so `unlimited` and `large` write `high` on those families, not `max` or `xhigh`. Grok may use `xhigh`. Grok slugs top out at `xhigh`, so under `unlimited` or `large` the fallback puts Grok at `xhigh` and keeps `grok-4.7-xhigh-fast` as it is. If the result is not a detected slug, use the same family's detected slug with the highest effort at or below the target and at or below the family cap, else mark the role as needing a choice. `inherit-parent` and `auto` do not change, and a Claude or GPT parent still stays at `high` or below. `small` turns the defaults into `claude-opus-5-5-medium` and `grok-4.7-medium-fast`.
 
 **(c) Show the roles and confirm.** Show every role with its model, marking any real slug not in the detected set as needing a choice. Also list each line step 2 dropped. Ask whether to accept as-is or change specific roles, offering the detected models plus `inherit-parent` and `auto` (both mean: this role runs on the parent chat model, which is how Auto users stay on Auto) as the options. Prefer AskQuestion over free text. For panel roles (arena runners, architect runners, interrogate reviewers) the value is a list, and one subagent runs per entry, alias entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena selects one value from it whose model family differs from the parent's when possible. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
 
 ### 4. Validate
 
-Every real slug written must be in the detected set. `inherit-parent` and `auto` always pass. If a chosen real slug is not available, stop and ask again.
+Every real slug written must be in the detected set. `inherit-parent` and `auto` always pass. If a chosen real slug is not available, stop and ask again. A Claude or GPT slug above `high` fails this step. Lower it to `high` and say so. A Grok slug may be `xhigh`.
 
 ### 5. Write the rule
 
@@ -45,24 +45,24 @@ alwaysApply: true
 ---
 # pstack model configuration. One line per role. Delete a line to fall back to the skill default.
 # `inherit-parent` or `auto` as a value: the role runs on the parent chat model (omit Task `model`). Alias entries in a panel list still count toward its fan-out.
-# budget: large (xhigh)
+# budget: large (Claude and GPT high, Grok xhigh)
 feature, refactoring: grok-4.7-xhigh-fast
 bug-fix: grok-4.7-xhigh-fast
 perf-issue: grok-4.7-xhigh-fast
 hillclimb: grok-4.7-xhigh-fast
-judgment and prose: claude-opus-5-5-xhigh
-hardest tasks: claude-opus-5-5-xhigh
+judgment and prose: claude-opus-5-5-high
+hardest tasks: claude-opus-5-5-high
 how explorer: grok-4.7-xhigh-fast
-how explainer: claude-opus-5-5-xhigh
+how explainer: claude-opus-5-5-high
 why investigators: grok-4.7-xhigh-fast
-why synthesizer: claude-opus-5-5-xhigh
+why synthesizer: claude-opus-5-5-high
 reflect tooling: grok-4.7-xhigh-fast
-reflect judgment, divergent, synthesizer: claude-opus-5-5-xhigh
-arena runners: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
-arena cross-judge pool: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
+reflect judgment, divergent, synthesizer: claude-opus-5-5-high
+arena runners: claude-opus-5-5-high, grok-4.7-xhigh-fast
+arena cross-judge pool: claude-opus-5-5-high, grok-4.7-xhigh-fast
 swarm workers: grok-4.7-xhigh-fast
-architect runners: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
-interrogate reviewers: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
+architect runners: claude-opus-5-5-high, grok-4.7-xhigh-fast
+interrogate reviewers: claude-opus-5-5-high, grok-4.7-xhigh-fast
 ```
 
 ### 6. Confirm
