@@ -31,8 +31,9 @@ pstack skills use Cursor names. In Codex, read this file once per session after 
 
 | Cursor | Codex |
 | --- | --- |
-| `claude-<family>-<version>-<effort>[-fast]`, such as `claude-opus-5-5-xhigh` | Codex cannot run Claude models. Run the seat on the session model. When `spawn_agent` takes a model override, pick a model from the session's own list at the slug's effort, and drop `-fast`. Say so. |
-| A `grok-*`, `gpt-*`, or other non-Claude slug | Same: the session model, or an override from the session's own list. |
+| `claude-<family>-<version>-<effort>[-fast]`, such as `claude-opus-5-5-xhigh` | Codex cannot run Claude models. When the session model is Grok, run the seat there, and Grok may stay at `xhigh`. When `spawn_agent` takes a model override, pick a GPT model from the session's own list at `high` or below, and drop `-fast`. Say so. |
+| A `gpt-*` slug | Pick that GPT model, or the session model when it is GPT. Cap the effort at `high`. Drop `-fast`. |
+| A `grok-*` or other non-Claude slug | Keep Grok at `xhigh` when the session is Grok. A GPT substitute stays at `high` or below. |
 | `auto` or `inherit-parent` | Omit the model. |
 | The `pstack-models.mdc` rule | Codex does not load it. Read and write `~/.config/pstack/models.md` instead, which holds the same role lines without frontmatter. Never put its role lines in `AGENTS.md`. |
 

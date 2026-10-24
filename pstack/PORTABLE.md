@@ -47,7 +47,7 @@ It merges `upstream/main`, rebuilds the generated tree with this fork's generato
 
 ## Models
 
-`~/.config/pstack/models.md` holds one line per role in Cursor's slug form, such as `claude-opus-5-5-xhigh`. `/setup-pstack` rewrites it. Every role runs on Claude: Opus for judgment, design, prose, and the hardest changes, Sonnet for code, git history, and parallel workers, and Haiku for the `how` explorers. `architect` pairs Opus with Sonnet. `interrogate` picks by size and risk: one Sonnet reviewer for a small or ordinary change, one Opus reviewer for a subtle or high-risk one, and both only for a contested design or when asked.
+`~/.config/pstack/models.md` holds one line per role in Cursor's slug form, such as `claude-opus-5-5-high`. `/setup-pstack` rewrites it. Claude and GPT never go above `high`. A slug or budget that says `xhigh` or `max` for those families is written and spawned as `high`. Grok may use `xhigh`. Every role runs on Claude when the session is Claude: Opus for judgment, design, prose, and the hardest changes, Sonnet for code, git history, and parallel workers, and Haiku for the `how` explorers. `architect` pairs Opus with Sonnet. `interrogate` picks by size and risk: one Sonnet reviewer for a small or ordinary change, one Opus reviewer for a subtle or high-risk one, and both only for a contested design or when asked.
 
 Haiku got the explorer seat from a blind eval on a 700-file PHP API and its Vue frontend. On "how does X work" questions, Haiku explorers covered as many verified facts as Sonnet explorers at a third to a tenth of the cost, but took about twice as long. Haiku fell behind on git history and on reuse decisions, so `why investigators` stay on Sonnet and the lead makes every reuse decision.
 
