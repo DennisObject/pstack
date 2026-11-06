@@ -134,6 +134,11 @@ function render() {
   for (const name of COMPANIONS) {
     for (const path of walk(join(TEAM_KIT, name))) files.set(`skills/${relative(TEAM_KIT, path)}`, file(path));
   }
+  // Claude Code runs a skill as `/<name>`, so a display name such as "Poteto Mode" cannot be typed or picked from a menu.
+  for (const [path, entry] of files) {
+    const skill = path.match(/^skills\/([^/]+)\/SKILL\.md$/)?.[1];
+    if (skill) entry.bytes = Buffer.from(entry.bytes.toString("utf8").replace(/^(---\r?\n(?:.*\r?\n)*?)name:.*$/m, `$1name: ${skill}`));
+  }
   files.set("LICENSE", file(join(PSTACK, "LICENSE")));
   for (const manifest of MANIFESTS) files.set(manifest, file(join(PSTACK, "plugin.json")));
   for (const [path, entry] of files) {
