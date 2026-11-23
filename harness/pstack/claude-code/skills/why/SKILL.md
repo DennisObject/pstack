@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Why
 
-Outside Cursor, read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code, Codex, and Grok.
+Read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the tool and model names in pstack skills to Claude Code and Codex.
 
 Investigate the motivation and intent behind code. The companion `how` skill answers what the code does and how it works. `why` answers what forces led to its shape.
 

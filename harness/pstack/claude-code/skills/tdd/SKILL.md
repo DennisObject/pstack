@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Test-driven development
 
-Outside Cursor, read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code, Codex, and Grok.
+Read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the tool and model names in pstack skills to Claude Code and Codex.
 
 Tests come from the requirement, not from the code. An implementation written first, with tests shaped afterward to pass, proves only that the code does what the code does. It misses the edge cases the task named and gives false confidence.
 
@@ -28,6 +28,16 @@ Tests come from the requirement, not from the code. An implementation written fi
 6. **Prove the cycle.** Run `red-green.sh --red <red commit> --expect '<new test name>' -- <test command>` the same way. It checks that the tests failed at the red commit, pass at HEAD, and that no test or test config changed in between. Then run the full backend suite from the project brief. Any rebase changes the red commit's hash, so rerun the proof after it.
 
 When a delegate implements, a different agent writes the tests: the parent, or a test-author delegate that gets only the requirement and the behavior list. The implementer gets the frozen tests and step 5 as its rule.
+
+## Test only what the change adds
+
+Write the fewest tests that would fail if the change broke. Each test needs a reason that no other test already covers. Before you write a test, check these:
+
+- **Do not test a reused module again.** When the change uses an existing module, such as a validator, a query builder or a policy check, its own tests already prove what it does. Test only what your code adds: that it uses the module, with the right setup. One test is usually enough.
+- **Use a few representative inputs, not every input.** To prove that unknown fields are dropped, send one or two of the fields that matter most. Do not send thirty and assert each column. A test that lists every field, rule or config value again only repeats the code. It breaks on every change to the list and catches no extra bug.
+- **Do not add a happy-path test that existing tests already cover.** If existing tests already run the main path with real input, a new test that runs it again and asserts more columns adds nothing.
+- **Do not split one behavior across tests.** "User fields are ignored" and "profile fields are ignored" are one behavior when one mechanism does both. Write one test.
+- **Prove each new test is needed.** Run it against the code without your change. If it passes there, it guards nothing that the change added. Delete it, or keep it only for a named, real risk.
 
 ## Existing tests
 
