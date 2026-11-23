@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Architect
 
-Read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the tool and model names in pstack skills to Claude Code, Codex, and Grok.
+Read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the tool and model names in pstack skills to Claude Code and Codex.
 
 Sketch types, function signatures, class shapes, and module boundaries with `not implemented` bodies and pseudocode. Synthesize across multiple model perspectives, then fill in code against the chosen sketch.
 

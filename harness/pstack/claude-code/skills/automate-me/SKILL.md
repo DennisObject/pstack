@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Automate me
 
-Read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the tool and model names in pstack skills to Claude Code, Codex, and Grok.
+Read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the tool and model names in pstack skills to Claude Code and Codex.
 
 A guided flow for turning the user's working conventions into a skill agents will follow. The output is one `-mode` skill tailored to them (e.g. `jay-mode`, `priya-mode`).
 

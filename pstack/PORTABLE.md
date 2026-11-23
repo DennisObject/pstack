@@ -1,6 +1,6 @@
 # Portable pstack
 
-This fork runs [pstack](./README.md) in Claude Code (including Claude Code threads in T3 Code), Codex, and Grok. It adds house rules for git, tests, code reuse, and comments. Upstream skills stay close to how poteto wrote them, apart from the short edits listed below, so upstream updates merge cleanly.
+This fork runs [pstack](./README.md) in Claude Code (including Claude Code threads in T3 Code) and Codex. It adds house rules for git, tests, code reuse, and comments. Upstream skills stay close to how poteto wrote them, apart from the short edits listed below, so upstream updates merge cleanly.
 
 ## What the install does
 
@@ -16,7 +16,7 @@ See [the repository README](../README.md#install) for the install commands.
 
 `--dry-run` prints the plan without making changes. `--uninstall` removes the links and the rules block, and keeps `~/.config/pstack/models.md` and the attribution setting.
 
-Grok also reads `~/.claude/skills/`, so the install covers it. Codex reads skills from `~/.agents/skills/`, so link each `~/.agents/skills/<name>` to `harness/pstack/claude-code/skills/<name>`.
+Codex reads skills from `~/.agents/skills/`, so link each `~/.agents/skills/<name>` to `harness/pstack/claude-code/skills/<name>`.
 
 ## Use
 
@@ -46,7 +46,7 @@ After the merge, the script tells you when to rerun `scripts/install-portable-ps
 
 ## Models
 
-`~/.config/pstack/models.md` holds one line per role as a model slug, such as `claude-opus-5-5-high`. `/setup-pstack` rewrites it. Claude and GPT never go above `high`. A slug or budget that says `xhigh` or `max` for those families is written and spawned as `high`. Grok may use `xhigh`.
+`~/.config/pstack/models.md` holds one line per role as a model slug, such as `claude-opus-5-5-high`. `/setup-pstack` rewrites it. Claude and GPT never go above `high`. A slug or budget that says `xhigh` or `max` for those families is written and spawned as `high`. This fork never runs Grok.
 
 In a Claude session, every role runs on Claude. Opus handles judgment, design, prose, and the hardest changes. Sonnet handles code, git history, and parallel workers. Haiku handles the `how` explorers. `architect` pairs Opus with Sonnet. `interrogate` picks reviewers by size and risk. It runs one Sonnet reviewer for a small or ordinary change, one Opus reviewer for a subtle or high-risk change, and both only for a contested design or when asked.
 
@@ -71,7 +71,7 @@ See [`skills/project-conventions/references/agents-md-template.md`](./skills/pro
 
 New files:
 
-- `skills/pstack-harness/` maps the tool and model names that upstream skills use to Claude Code, T3 Code, Codex, and Grok. Its Claude Code adapter starts from upstream's `docs/harness/claude-code.md`, which stays in place so upstream edits to it still merge.
+- `skills/pstack-harness/` maps the tool and model names that upstream skills use to Claude Code, T3 Code, and Codex. Its Claude Code adapter starts from upstream's `docs/harness/claude-code.md`, which stays in place so upstream edits to it still merge.
 - `skills/git-conventions/`, `skills/project-conventions/`, and `skills/reuse-scan/`.
 - `skills/git-conventions/scripts/check-message.sh` and `skills/tdd/scripts/red-green.sh`, with tests.
 - `../scripts/install-portable-pstack.sh` and `../scripts/sync-upstream.sh`, with tests.

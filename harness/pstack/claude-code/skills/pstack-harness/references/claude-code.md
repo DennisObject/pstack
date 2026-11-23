@@ -32,7 +32,7 @@ pstack skills use Cursor names. In Claude Code, read this file once per session 
 | Cursor | Claude Code |
 | --- | --- |
 | `claude-<family>-<version>-<effort>[-fast]`, such as `claude-opus-5-5-xhigh` | `model` from the family: `opus`, `sonnet`, `haiku`, or `fable`. Drop `-fast`. Pass the slug's effort, but never above `high`. `xhigh` and `max` become `high`. |
-| A `grok-*` slug | Claude Code cannot run Grok. Run the seat on `model: "sonnet"` at `high`, and drop `-fast`. Do not copy a Grok `xhigh` onto Claude. |
+| A `grok-*` slug | Never run Grok. Run the seat on `model: "sonnet"` at `high`, and drop `-fast`. Do not copy a Grok `xhigh` onto Claude. |
 | A `gpt-*` or other non-Claude slug | Run the seat on `model: "sonnet"` at the slug's effort, capped at `high`. Drop `-fast`. |
 | `auto` or `inherit-parent` | Omit `model`. |
 | The `pstack-models.mdc` rule | Claude Code does not load it. Read and write `~/.config/pstack/models.md` instead, which holds the same role lines without frontmatter. [The harness skill](../SKILL.md) says how `setup-pstack` writes it. Never put its role lines in `CLAUDE.md` or `AGENTS.md`. |

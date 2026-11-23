@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Test-driven development
 
-Read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the tool and model names in pstack skills to Claude Code, Codex, and Grok.
+Read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the tool and model names in pstack skills to Claude Code and Codex.
 
 Tests come from the requirement, not from the code. An implementation written first, with tests shaped afterward to pass, proves only that the code does what the code does. It misses the edge cases the task named and gives false confidence.
 

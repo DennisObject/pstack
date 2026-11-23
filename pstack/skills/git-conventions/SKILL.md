@@ -43,7 +43,7 @@ Every commit header is a Conventional Commit: `type(scope): subject`.
 
 One commit is one reviewable step that builds and passes on its own. The one exception is the red commit of the **tdd** skill, which holds failing tests on purpose. Order the commits so they tell the story: subtraction before the reshape, the failing test before the fix. A typical PR carries two to four such commits, often with one scope.
 
-Stage named paths with `git add <path>`, never `git add -A` or `git add .` without reading `git status` first. Keep secrets, `.env` files, build output, personal agent state such as `.claude/settings.local.json`, transcripts, and `.t3/`, and scratch files out of commits. Commit a `.claude/` or `.grok/` file only when the repository already tracks that folder.
+Stage named paths with `git add <path>`, never `git add -A` or `git add .` without reading `git status` first. Keep secrets, `.env` files, build output, personal agent state such as `.claude/settings.local.json`, transcripts, and `.t3/`, and scratch files out of commits. Commit a `.claude/` file only when the repository already tracks that folder.
 
 ### Reshape history without an interactive editor
 

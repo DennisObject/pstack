@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Reuse scan
 
-Read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the tool and model names in pstack skills to Claude Code, Codex, and Grok.
+Read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the tool and model names in pstack skills to Claude Code and Codex.
 
 Every line you add is a line a teammate maintains by hand. Before you write something, show that the codebase does not already have it. Code that already exists is already reviewed, already tested, and already understood by the team.
 

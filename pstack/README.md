@@ -1,6 +1,6 @@
 # pstack
 
-pstack is a set of agent skills for disciplined engineering work. It guides coding agents to write smaller diffs, test their changes, and verify that the code works. [poteto](https://x.com/poteto) wrote the original. This fork runs pstack in Claude Code (including T3 Code), Codex, and Grok, and adds house rules for git, tests, code reuse, and comments.
+pstack is a set of agent skills for disciplined engineering work. It guides coding agents to write smaller diffs, test their changes, and verify that the code works. [poteto](https://x.com/poteto) wrote the original. This fork runs pstack in Claude Code (including T3 Code), and Codex, and adds house rules for git, tests, code reuse, and comments.
 
 ## Install
 
@@ -113,7 +113,7 @@ The full rules and playbook triggers live in [`skills/poteto-mode/SKILL.md`](./s
 | [`/project-conventions`](./skills/project-conventions/SKILL.md) | You are about to write code in a repository and need its rules, commands, and local patterns first. |
 | [`/reuse-scan`](./skills/reuse-scan/SKILL.md) | You are about to write code the codebase may already have. Finds existing code to reuse, or justifies new code in one line. |
 | [`/git-conventions`](./skills/git-conventions/SKILL.md) | You are branching, committing, or opening a PR. Enforces Conventional Commits, a `Why`/`Testing`/`Deployment` PR body, and no AI attribution. |
-| [`/pstack-harness`](./skills/pstack-harness/SKILL.md) | Maps the tool and model names used in pstack skills to Claude Code, Codex, and Grok. Every skill that uses those names reads it first. |
+| [`/pstack-harness`](./skills/pstack-harness/SKILL.md) | Maps the tool and model names used in pstack skills to Claude Code and Codex. Every skill that uses those names reads it first. |
 | [`/benchmark-checklist`](./skills/benchmark-checklist/SKILL.md) | You ran a benchmark or measured a speedup or regression. Checks the number (limiter, tuning, errors, repeat runs, and end-to-end relevance) before you report or act on it. |
 | [`/no-comments`](./skills/no-comments/SKILL.md) | You want to strip unneeded comments before review. Spawns Comment Sicko, fixes accepted findings, and offers structural encodings for claimed constraints. |
 | [`/typescript-best-practices`](./skills/typescript-best-practices/SKILL.md) | You are reading or editing TypeScript. Applies the `type-system-discipline` principle in concrete TypeScript syntax. |
