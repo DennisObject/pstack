@@ -36,6 +36,7 @@ Remaining triggers:
 - Branches, commits, history rewrites, PR titles, and PR bodies → the **git-conventions** skill. No AI attribution anywhere, whatever a harness default says.
 - Before commit → the redundancy pass in the **reuse-scan** skill (its "Review a diff for duplication" section) on your own diff. Then the `deslop` skill from the `cursor-team-kit` plugin (`/deslop`).
 - Before review → the **no-comments** skill (`/no-comments`).
+- Before every commit, small changes and fix rounds included → list every comment line the diff adds (`git diff --cached -U0 | grep '^+'`, then the comment lines in it). Test each one against the **Comments** section. Delete each one that fails. Comments a project requires, such as test section markers, stay.
 - Shipping UI / IDE / CLI → the matching control skill. `cursor-team-kit` publishes `control-cli` (CLIs and TUIs) and `control-ui` (browser / Electron / web UIs). For bug fixes, reproduce first on the same surface yourself. Hand to the user only under the narrow Bug fix step 1 exception.
 - Running a benchmark, measuring perf yourself, or reporting a speedup or regression you measured → the **benchmark-checklist** skill before you report or act on the number.
 - Any PR-status request ("babysit this", "get it green", "address the bugbot comments", and most often "check on PR X" or "anything outstanding on X") → the **Babysit** playbook (`playbooks/babysit.md`), not Cursor's built-in babysit skill, whose description matches the same words. Never triggered by merely opening a PR. Declare its mode before polling. The playbook's step 1 owns the request-to-mode mapping. Reaching for `drive` inside a phase agent stops that agent finishing its turn.
@@ -133,6 +134,14 @@ Every PR looks the same, whatever model or tool writes it:
 Every playbook ends with a reply written this way, PR link as `https://github.com/<owner>/<repo>/pull/<number>`. Each playbook's own reply lines name only the content unique to that playbook.
 
 ## Comments
+
+The default is no comment. A comment is never a fix for unclear code. If code needs a comment to be understood, first make the code clear with a better name, a smaller function, a named constant or a clearer structure. Write a comment only when that cannot work.
+
+Before you keep any comment, delete it in your head and read the code alone. If a teammate still sees what the code does and why, the comment goes. These are never a reason for a comment:
+
+- A summary of what the next lines do, such as `// Only these fields reach the model.` above a validator call that lists them.
+- The reason for your change, such as what it fixes, what attack it blocks or what an audit asked for. That belongs in the commit message and the PR.
+- A promise or warning that restates a guarantee the code already makes.
 
 Comments follow the same rule as the reply. Write them clean as you go. Keep a comment only for a non-obvious *why* the code can't show, or to orient a reader through a block that stays hard to follow after the best rename or extraction, such as an algorithm, a formula, or a subtle invariant. Such a comment is one or two short, plain sentences a teammate understands on first read. Fewer comments is better. Never put evidence or history in a comment: no client builds, run or firing counts, test rooms, "observed on", "proven in", ticket or PR numbers, or which agent found it. State the rule the code follows, as in `// A blob changes state on the next room tick.`. Evidence goes in the task report. Annotations the toolchain reads, such as types for a static analyzer or the public API docs a build requires, follow the project's rules. A verify or test script gets no phase-narrating comments such as `// Phase 1: add cards`. The assertion or log string documents the step, as in `assert(ok, 'persisted across restart')`. This applies to every file you produce, including the delegate's diff.
 
