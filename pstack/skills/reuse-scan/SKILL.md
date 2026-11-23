@@ -12,10 +12,13 @@ Every line you add is a line a teammate maintains by hand. Before you write some
 
 Write one line per piece the change needs: what it does in domain words, and its shape. For example, "format a price in cents for display, integer to string", or "find the players on a map that target an entity, entity to player list".
 
-## 2. Search four ways
+Name the need as the outcome, not as a mechanism. An audit, issue, review comment or ticket often proposes a fix such as "add an allowlist" or "add a permission check". That is the result that must hold, not the way to build it. Write "accept only these request fields", not "write an allowlist array". A need named as a mechanism only finds that mechanism, and misses the module the project already uses for the job.
 
-Run all four searches. One alone misses often.
+## 2. Search five ways
 
+Run all five searches. One alone misses often.
+
+- **By precedent.** Ask how this codebase already solves this kind of problem, then find two or three places that do it. Search the problem class, not your planned code. Input that must be limited or checked leads to the project's validator or request objects. Access rules lead to its policy or privilege checks. A query leads to its query builder or repository. Read the sibling endpoints, handlers or components that face the same problem. When the project has a module for the job, using it is the default, even if a few lines of your own would also work.
 - **By name.** Search the verbs and nouns and their synonyms in identifiers, such as format, render, and display, or total, sum, and calculate. Use `rg -n -i` with word boundaries.
 - **By shape.** Search for functions that take or return the same type or record.
 - **By neighbor.** Read what the code around the change already calls, and what its sibling files call. The helper you need is often one import away.
@@ -30,7 +33,7 @@ If the project's instruction files name a semantic code search tool, use it next
 
 ## 3. Decide each need
 
-- **Reuse** the existing code as it is. This is the default.
+- **Reuse** the existing code as it is. This is the default. A project module built for the job, such as a validator, a policy layer or a query builder, beats a hand-written array, loop or check, even a short one.
 - **Extend** existing code with a small change that keeps one source of truth. List its callers first and confirm that none of them changes behavior. Run the **blast-radius** skill when you are not sure.
 - **Write new code** only when nothing fits. Say in one line why the closest candidate does not fit. Put the code where the next reader would look for it: the shared home when a second caller is likely, next to its only caller otherwise.
 
