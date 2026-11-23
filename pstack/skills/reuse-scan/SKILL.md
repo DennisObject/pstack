@@ -48,8 +48,18 @@ Write the reuse brief as a table and pass it to every delegate that writes code.
 | Percent of an amount | `server/src/util/math.js:4` `percentOf` | Reuse | |
 | Validate a discount code | None. Closest is `validateCoupon` in `legacy/`, which nothing calls. | New, in `server/src/discounts.js` | The legacy helper reads the old cart format. |
 
-Add this rule to each delegate's brief: "Do not add a function, class, component, or query that is not in the reuse brief. If you need one, report the search that came up empty."
+Add this rule to each delegate's brief: "Do not add a function, class, component, or query that is not in the reuse brief. If you need one, report the search that came up empty. Before you report back, run the redundancy pass from the reuse-scan skill's 'Review a diff for duplication' section on your diff."
 
 ## Review a diff for duplication
 
 For each new function, class, component, query, and config key in a diff, run step 2 once. New code that repeats existing code is a blocking finding. Name the existing code with `file:line` and the call that replaces the new code.
+
+Then read the diff for redundancy inside it and around it. Run this pass on your own diff before every commit, not only on someone else's. Each hit is a blocking finding:
+
+- **The same value computed twice.** A length, a lookup, a query, or a parse that two methods or two branches repeat from inputs that do not change. Compute it once, in the constructor, a property, or a local, and pass it on.
+- **A second mechanism for a job already done.** Before you add a default, a filter, a guard, or a fallback, trace the value from where it enters to where you use it. That includes the caller, the parent component, the props, and the layer above. If something on that path already does the job, use it and add nothing.
+- **A check repeated across layers.** If a boundary already guarantees a value, such as a parser, a DTO, or a validated request, the code behind it trusts that value. Keep a second check only when it guards a different failure, and name that failure.
+- **The same rule in two places.** One rule, such as which text to translate or which languages to skip, lives in one function that every caller uses. Two copies drift apart.
+- **Dead weight.** An import, prop, computed value, parameter, return field, CSS class, or branch that nothing reads. A wrapper with one caller that adds nothing.
+
+Re-read every file you touched from top to bottom once, not only the hunks. Redundancy hides between a new hunk and an old line that the diff view does not show.
