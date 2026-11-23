@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Project conventions
 
-Outside Cursor, read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code, Codex, and Grok.
+Read [the pstack harness skill](../pstack-harness/SKILL.md) once per session before you follow this skill. It maps the tool and model names in pstack skills to Claude Code, Codex, and Grok.
 
 pstack holds no language rules. The repository does. A PHP project's `AGENTS.md` says PSR-12, a C# project's `.editorconfig` says how to name fields, and CI says what must pass. This skill finds those rules before you write code, so the change reads as if the team wrote it.
 

@@ -1,11 +1,11 @@
 # Portable pstack
 
-This fork runs [pstack](./README.md) in Claude Code, including Claude Code threads in T3 Code, with the same playbooks and skills it uses in Cursor. It also adds house rules for git, testing, reuse, and comments. The upstream skills stay as poteto wrote them, apart from a few short edits listed at the end, so upstream updates merge cleanly.
+This fork runs [pstack](./README.md) in Claude Code (including Claude Code threads in T3 Code), Codex, and Grok. It does not target Cursor. It also adds house rules for git, testing, reuse, and comments. The upstream skills stay as poteto wrote them, apart from a few short edits listed at the end, so upstream updates merge cleanly.
 
 ## Install
 
 ```bash
-git clone <this fork> ~/Projects/pstack
+git clone https://github.com/DennisObject/pstack.git ~/Projects/pstack
 ~/Projects/pstack/scripts/install-portable-pstack.sh
 ```
 
@@ -47,7 +47,7 @@ It merges `upstream/main`, rebuilds the generated tree with this fork's generato
 
 ## Models
 
-`~/.config/pstack/models.md` holds one line per role in Cursor's slug form, such as `claude-opus-5-5-high`. `/setup-pstack` rewrites it. Claude and GPT never go above `high`. A slug or budget that says `xhigh` or `max` for those families is written and spawned as `high`. Grok may use `xhigh`. Every role runs on Claude when the session is Claude: Opus for judgment, design, prose, and the hardest changes, Sonnet for code, git history, and parallel workers, and Haiku for the `how` explorers. `architect` pairs Opus with Sonnet. `interrogate` picks by size and risk: one Sonnet reviewer for a small or ordinary change, one Opus reviewer for a subtle or high-risk one, and both only for a contested design or when asked.
+`~/.config/pstack/models.md` holds one line per role as a model slug, such as `claude-opus-5-5-high`. `/setup-pstack` rewrites it. Claude and GPT never go above `high`. A slug or budget that says `xhigh` or `max` for those families is written and spawned as `high`. Grok may use `xhigh`. Every role runs on Claude when the session is Claude: Opus for judgment, design, prose, and the hardest changes, Sonnet for code, git history, and parallel workers, and Haiku for the `how` explorers. `architect` pairs Opus with Sonnet. `interrogate` picks by size and risk: one Sonnet reviewer for a small or ordinary change, one Opus reviewer for a subtle or high-risk one, and both only for a contested design or when asked.
 
 Haiku got the explorer seat from a blind eval on a 700-file PHP API and its Vue frontend. On "how does X work" questions, Haiku explorers covered as many verified facts as Sonnet explorers at a third to a tenth of the cost, but took about twice as long. Haiku fell behind on git history and on reuse decisions, so `why investigators` stay on Sonnet and the lead makes every reuse decision.
 
@@ -70,7 +70,7 @@ pstack carries the workflow. Each repository's `AGENTS.md` carries the facts: co
 
 New files:
 
-- `skills/pstack-harness/` maps Cursor names to Claude Code and T3 Code. Its Claude Code adapter starts from upstream's `docs/harness/claude-code.md`, which stays in place so upstream edits to it still merge.
+- `skills/pstack-harness/` maps the tool and model names that the upstream skills use to Claude Code, T3 Code, Codex, and Grok. Its Claude Code adapter starts from upstream's `docs/harness/claude-code.md`, which stays in place so upstream edits to it still merge.
 - `skills/git-conventions/`, `skills/project-conventions/`, and `skills/reuse-scan/`.
 - `skills/git-conventions/scripts/check-message.sh` and `skills/tdd/scripts/red-green.sh`, with tests.
 - `../scripts/install-portable-pstack.sh` and `../scripts/sync-upstream.sh`, with tests.
@@ -82,8 +82,8 @@ Edited upstream files:
 - `playbooks/feature.md`, `bug-fix.md`, and `refactoring.md` fold those steps into their existing steps and let a small change skip `how` and `architect`. `opening-a-pr.md` points its description format at `git-conventions` and runs `interrogate` before every PR.
 - `agents/comment-sicko.md` and `skills/no-comments/SKILL.md` keep tool-read annotations and the short orientation comment.
 - `agents/poteto-agent.md`, `skills/poteto-help/SKILL.md`, `skills/interrogate/references/code-quality-review.md`, and the skill table in `README.md` get a few lines each.
-- `../scripts/generate-pstack-harness-trees.mjs` points every generated skill at the harness skill, ships the `cursor-team-kit` companions, and checks that the Claude Code adapter maps every Cursor name.
+- `../scripts/generate-pstack-harness-trees.mjs` points every generated skill at the harness skill, ships the `cursor-team-kit` companions, and checks that every adapter maps every tool name the skills use.
 
 ## Limits
 
-- Bugbot, Cursor cloud agents, Cursor Automations, and Custom Modes have no equivalent. The harness skill maps each to the nearest substitute or skips it. The `benny` automation pack stays Cursor-only.
+- Some upstream skills mention features that exist only in Cursor, such as Bugbot, cloud agents, Automations, and Custom Modes. The harness skill maps each to the nearest substitute or skips it. This fork does not use the `benny` automation pack.
