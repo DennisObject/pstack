@@ -60,8 +60,13 @@ Then read the diff for redundancy inside it and around it. Run this pass on your
 
 - **The same value computed twice.** A length, a lookup, a query, or a parse that two methods or two branches repeat from inputs that do not change. Compute it once, in the constructor, a property, or a local, and pass it on.
 - **A second mechanism for a job already done.** Before you add a default, a filter, a guard, or a fallback, trace the value from where it enters to where you use it. That includes the caller, the parent component, the props, and the layer above. If something on that path already does the job, use it and add nothing.
-- **A check repeated across layers.** If a boundary already guarantees a value, such as a parser, a DTO, or a validated request, the code behind it trusts that value. Keep a second check only when it guards a different failure, and name that failure.
-- **The same rule in two places.** One rule, such as which text to translate or which languages to skip, lives in one function that every caller uses. Two copies drift apart.
-- **Dead weight.** An import, prop, computed value, parameter, return field, CSS class, or branch that nothing reads. A wrapper with one caller that adds nothing.
+- **A check repeated across layers.** If a boundary already guarantees a value, such as a parser, a DTO, or a validated request, the code behind it trusts that value. Keep a second check only when it guards a different failure, and name that failure. A loose check that runs before a stricter one, such as a format regex before a lookup in the real list, is the same redundancy.
+- **The same rule in two places.** One rule, such as which text to translate or which languages to skip, lives in one function that every caller uses. Two copies drift apart. This includes a backend rule copied into the frontend: have the backend send it.
+- **Dead weight.** An import, prop, computed value, parameter, CSS class, or branch that nothing reads. A response field the client never reads. A branch no real caller can reach: check what the client actually sends before you handle another shape. A wrapper with one caller that adds nothing.
+- **A refactor that does more work than the code it replaced.** When you route existing code through a new helper, keep its early exits, and count its queries and loops before and after. Loading the same table twice in one request is the same value computed twice.
+- **A shared helper that changes an old caller.** When you extract a helper from existing code, compare what each old caller did before and after. Keep the old behavior, or name the change in the PR.
+- **Tests that repeat each other.** Two tests that assert the same thing, a test that does not exercise the path its name describes, or a database test for a constant that a unit test can check.
+
+One more check that is not redundancy but hides as it: when one piece of code only works because another trims, sorts, or filters first, say so in a comment where that step happens. Otherwise the next reader removes the step as noise.
 
 Re-read every file you touched from top to bottom once, not only the hunks. Redundancy hides between a new hunk and an old line that the diff view does not show.
